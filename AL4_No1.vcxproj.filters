@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Sources\Scene\SceneManager.cpp">
+      <Filter>Sources\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene\TitleScene.cpp">
+      <Filter>Sources\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene\GameScene.cpp">
+      <Filter>Sources\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene\ResultScene.cpp">
+      <Filter>Sources\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Menu\TitleMenu.cpp">
+      <Filter>Sources\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Utils\Easing.cpp">
+      <Filter>Sources\Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{4a8113da-97ea-4166-a28e-3fb21ce455b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene">
+      <UniqueIdentifier>{f920a2ec-7c69-4f6b-b4b5-ceedd95eab47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Utils">
+      <UniqueIdentifier>{b3f94e20-e423-44fa-abf2-73d9dc753498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Menu">
+      <UniqueIdentifier>{c97778f1-399f-4b68-9740-88b70b3d60a2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Scene\SceneManager.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene\TitleScene.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene\GameScene.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene\ResultScene.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene\Scene.h">
+      <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Menu\Menu.h">
+      <Filter>Sources\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Menu\TitleMenu.h">
+      <Filter>Sources\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utils\Easing.h">
+      <Filter>Sources\Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

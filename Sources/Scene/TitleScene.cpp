@@ -13,7 +13,7 @@ void TitleScene::Initialize(SceneManager *sceneManager) {
 	graphHandleTitleLogo_ = TextureManager::Load("titleLogo.png");
 
 	// スプライト生成
-	spriteTitleLogo_ = Sprite::Create(graphHandleTitleLogo_, {100,0}, { 0.5f, 0.5f, 0.5f, 1.0f });
+	spriteTitleLogo_ = Sprite::Create(graphHandleTitleLogo_, {100,25}, { 1.0f, 1.0f, 1.0f, 1.0f });
 
 
 	// タイトルメニュー初期化

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stageManager.h"
+
 class Scene;
 
 class SceneManager {
@@ -15,7 +17,7 @@ public:
 	~SceneManager();
 
 
-	void Initialize();
+	void Initialize(StageManager *stageManager);
 	void Update();
 	void Draw();
 
@@ -36,4 +38,6 @@ private:
 	// シーン
 	Scene* currentScene_ = nullptr;
 	SceneType scene_ = SceneType::kTitle;
+
+	StageManager *stageManager_;
 };

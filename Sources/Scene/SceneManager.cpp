@@ -13,7 +13,7 @@ SceneManager::~SceneManager() {
 	currentScene_ = nullptr;
 }
 
-void SceneManager::Initialize() {
+void SceneManager::Initialize(StageManager* stageManager) {
 	// 最初のシーン
 	scene_ = SceneType::kTitle;
 
@@ -21,6 +21,8 @@ void SceneManager::Initialize() {
 	titleScene->Initialize(this);
 
 	currentScene_ = titleScene;
+
+	stageManager_ = stageManager;
 }
 
 void SceneManager::Update() {
@@ -62,7 +64,7 @@ void SceneManager::ChangeScene() {
 		scene_ = SceneType::kGame;
 
 		GameScene *gameScene = new GameScene();
-		gameScene->Initialize();
+		gameScene->Initialize(stageManager_);
 
 		currentScene_ = gameScene;
 		break;

@@ -2,7 +2,7 @@
 
 #include "Scene.h"
 
-class ResultScene : public Scene {
+class ResultScene final : public Scene {
 public:
 	ResultScene() = default;
 	~ResultScene() override = default;

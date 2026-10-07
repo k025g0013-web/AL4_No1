@@ -1,7 +1,7 @@
 #include "TitleMenu.h"
 using namespace KamataEngine;
 
-#include "Utils/Easing.h"
+#include "Math/Easing.h"
 
 void TitleMenu::Initialize() {
     // テクスチャ読み込み
@@ -27,7 +27,7 @@ void TitleMenu::Update() {
 	int previousItem = selectedItem_;
 
 	// 決定
-	if (input->TriggerKey(DIK_RETURN)) isDecided_ = true;
+	if (input->TriggerKey(DIK_SPACE)) isDecided_ = true;
 
 	// 上
 	if (input->TriggerKey(DIK_UP)) {

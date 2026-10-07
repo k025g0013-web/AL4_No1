@@ -2,7 +2,7 @@
 
 #include "Menu.h"
 
-class TitleMenu : public Menu {
+class TitleMenu final : public Menu {
 public:
 	TitleMenu() = default;
 	~TitleMenu() override = default;

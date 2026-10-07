@@ -1,8 +1,17 @@
 #include "ResultScene.h"
+#include "KamataEngine.h"
 
-void ResultScene::Initialize() { isFinished_ = false; }
+using namespace KamataEngine;
 
-void ResultScene::Update() {}
+void ResultScene::Initialize() {
+	isFinished_ = false; 
+}
+
+void ResultScene::Update() { 
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		isFinished_ = true;
+	}
+}
 
 void ResultScene::Draw() {}
 

@@ -4,9 +4,7 @@
 #include <algorithm>
 
 // 動かし方は下記のイメージ
-// KamataEngine::Vector2 a = Easing::Interpolate(EasingType::easeInBack, 0.0f, Vector2{ 0.0f, 0.0f }, Vector2{ 10.0f, 10.0f });
-// KamataEngine::Vector3 a = Easing::Interpolate(EasingType::easeInBack, 0.0f, Vector3{ 0.0f, 0.0f }, Vector3{ 10.0f, 10.0f });
-// KamataEngine::Vector4 a = Easing::Interpolate(EasingType::easeInBack, 0.0f, Vector4{ 0.0f, 0.0f }, Vector4{ 10.0f, 10.0f });
+// float a = Easing::Interpolate(EasingType::easeInBack, t, 0.0f, 10.0f);
 
 enum class EasingType {
 	// 等速補間

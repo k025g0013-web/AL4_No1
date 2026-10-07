@@ -179,22 +179,56 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Sources\CameraController.cpp" />
+    <ClCompile Include="Sources\Effect\DeathParticles.cpp" />
+    <ClCompile Include="Sources\Effect\Fade.cpp" />
+    <ClCompile Include="Sources\Effect\GuardEffect.cpp" />
+    <ClCompile Include="Sources\Effect\HitEffect.cpp" />
+    <ClCompile Include="Sources\Effect\Skydome.cpp" />
+    <ClCompile Include="Sources\Effect\TitleLogo.cpp" />
+    <ClCompile Include="Sources\MapChipField.cpp" />
+    <ClCompile Include="Sources\Math\Collision.cpp" />
+    <ClCompile Include="Sources\Math\Easing.cpp" />
     <ClCompile Include="Sources\Menu\TitleMenu.cpp" />
+    <ClCompile Include="Sources\Object\Enemy\Enemy.cpp" />
+    <ClCompile Include="Sources\Object\Enemy\NormalEnemy.cpp" />
+    <ClCompile Include="Sources\Object\Enemy\ShieldEnemy.cpp" />
+    <ClCompile Include="Sources\Object\Player.cpp" />
     <ClCompile Include="Sources\Scene\GameScene.cpp" />
     <ClCompile Include="Sources\Scene\ResultScene.cpp" />
     <ClCompile Include="Sources\Scene\SceneManager.cpp" />
     <ClCompile Include="Sources\Scene\TitleScene.cpp" />
-    <ClCompile Include="Sources\Utils\Easing.cpp" />
+    <ClCompile Include="Sources\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\CameraController.h" />
+    <ClInclude Include="Sources\CollisionMapInfo.h" />
+    <ClInclude Include="Sources\Effect\DeathParticles.h" />
+    <ClInclude Include="Sources\Effect\Fade.h" />
+    <ClInclude Include="Sources\Effect\GuardEffect.h" />
+    <ClInclude Include="Sources\Effect\HitEffect.h" />
+    <ClInclude Include="Sources\Effect\Skydome.h" />
+    <ClInclude Include="Sources\Effect\TitleLogo.h" />
+    <ClInclude Include="Sources\LRDirection.h" />
+    <ClInclude Include="Sources\MapChipField.h" />
+    <ClInclude Include="Sources\Math\AABB.h" />
+    <ClInclude Include="Sources\Math\Collision.h" />
+    <ClInclude Include="Sources\Math\Easing.h" />
+    <ClInclude Include="Sources\Math\Matrix.h" />
+    <ClInclude Include="Sources\Math\Vector.h" />
+    <ClInclude Include="Sources\Math\UpdateWorldTransform.h" />
     <ClInclude Include="Sources\Menu\Menu.h" />
     <ClInclude Include="Sources\Menu\TitleMenu.h" />
+    <ClInclude Include="Sources\Object\Enemy\Enemy.h" />
+    <ClInclude Include="Sources\Object\Enemy\NormalEnemy.h" />
+    <ClInclude Include="Sources\Object\Enemy\ShieldEnemy.h" />
+    <ClInclude Include="Sources\Object\Player.h" />
     <ClInclude Include="Sources\Scene\GameScene.h" />
     <ClInclude Include="Sources\Scene\ResultScene.h" />
     <ClInclude Include="Sources\Scene\Scene.h" />
     <ClInclude Include="Sources\Scene\SceneManager.h" />
     <ClInclude Include="Sources\Scene\TitleScene.h" />
-    <ClInclude Include="Sources\Utils\Easing.h" />
+    <ClInclude Include="Sources\StageManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

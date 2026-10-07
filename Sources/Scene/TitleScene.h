@@ -5,7 +5,7 @@
 
 #include "Menu/TitleMenu.h"
 
-class TitleScene : public Scene {
+class TitleScene final : public Scene {
 public:
 	TitleScene() = default;
 	~TitleScene() override = default;

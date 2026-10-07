@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Sources\Scene\SceneManager.cpp">
       <Filter>Sources\Scene</Filter>
     </ClCompile>
@@ -17,8 +16,51 @@
     <ClCompile Include="Sources\Menu\TitleMenu.cpp">
       <Filter>Sources\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Utils\Easing.cpp">
-      <Filter>Sources\Utils</Filter>
+    <ClCompile Include="Sources\MapChipField.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\CameraController.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Sources\StageManager.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Player.cpp">
+      <Filter>Sources\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\DeathParticles.cpp">
+      <Filter>Sources\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\Fade.cpp">
+      <Filter>Sources\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\GuardEffect.cpp">
+      <Filter>Sources\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\HitEffect.cpp">
+      <Filter>Sources\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\Skydome.cpp">
+      <Filter>Sources\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\TitleLogo.cpp">
+      <Filter>Sources\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Math\Collision.cpp">
+      <Filter>Sources\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Math\Easing.cpp">
+      <Filter>Sources\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Enemy\Enemy.cpp">
+      <Filter>Sources\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Enemy\ShieldEnemy.cpp">
+      <Filter>Sources\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Enemy\NormalEnemy.cpp">
+      <Filter>Sources\Object\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -28,11 +70,20 @@
     <Filter Include="Sources\Scene">
       <UniqueIdentifier>{f920a2ec-7c69-4f6b-b4b5-ceedd95eab47}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Utils">
-      <UniqueIdentifier>{b3f94e20-e423-44fa-abf2-73d9dc753498}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Menu">
       <UniqueIdentifier>{c97778f1-399f-4b68-9740-88b70b3d60a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Object">
+      <UniqueIdentifier>{2ce07804-ff34-49b0-956a-3f42a8bfae1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Effect">
+      <UniqueIdentifier>{e23d8b0b-099a-472d-9bf1-728a25f23fba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Math">
+      <UniqueIdentifier>{b3f94e20-e423-44fa-abf2-73d9dc753498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Object\Enemy">
+      <UniqueIdentifier>{0586e740-1347-49f0-a677-e6bfe86214ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,8 +108,68 @@
     <ClInclude Include="Sources\Menu\TitleMenu.h">
       <Filter>Sources\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Utils\Easing.h">
-      <Filter>Sources\Utils</Filter>
+    <ClInclude Include="Sources\MapChipField.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CameraController.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\StageManager.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Player.h">
+      <Filter>Sources\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\DeathParticles.h">
+      <Filter>Sources\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\Fade.h">
+      <Filter>Sources\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\GuardEffect.h">
+      <Filter>Sources\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\HitEffect.h">
+      <Filter>Sources\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\Skydome.h">
+      <Filter>Sources\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\TitleLogo.h">
+      <Filter>Sources\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Math\Collision.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Math\Easing.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Math\Matrix.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Math\Vector.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Math\UpdateWorldTransform.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Enemy\Enemy.h">
+      <Filter>Sources\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Enemy\ShieldEnemy.h">
+      <Filter>Sources\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Enemy\NormalEnemy.h">
+      <Filter>Sources\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\LRDirection.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CollisionMapInfo.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Math\AABB.h">
+      <Filter>Sources\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

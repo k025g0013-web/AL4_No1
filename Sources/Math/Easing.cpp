@@ -3,6 +3,8 @@
 #include "KamataEngine.h"
 using namespace KamataEngine;
 
+#include "Vector.h"
+
 static float InterpolateValue(float start, float end, float rate) {
     return start + (end - start) * rate;
 }

@@ -28,6 +28,9 @@ protected:
 	void BehaviorGuardInitialize();
 	void BehaviorGuardUpdate();
 
+	// 盾の敵専用の歩行アニメーション
+	void ApplyWalkAnimation(float degree) override;
+
 protected:
 	// ガード用タイマー
 	uint32_t guardTimer_ = 0;

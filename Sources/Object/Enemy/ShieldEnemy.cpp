@@ -7,11 +7,7 @@
 
 using namespace KamataEngine;
 
-void ShieldEnemy::Initialize(
-	Model *model,
-	Camera *camera,
-	const Vector3 &position
-) {
+void ShieldEnemy::Initialize(Model *model, Camera *camera, const Vector3 &position) {
 	// 基底クラスの初期化
 	Enemy::Initialize(model, camera, position);
 
@@ -49,6 +45,7 @@ void ShieldEnemy::Update() {
 	switch (behavior_) {
 	case Behavior::kWalk:
 		BehaviorWalkUpdate();
+		Move(true);
 		break;
 
 	case Behavior::kDeath:
@@ -62,6 +59,8 @@ void ShieldEnemy::Update() {
 	default:
 		break;
 	}
+
+	UpdateTurnAnimation();
 
 	// ワールド行列更新
 	UpdateWorldTransform(worldTransform_);
@@ -107,6 +106,8 @@ void ShieldEnemy::OnCollision(Player *player) {
 		}
 
 		// 背後からの攻撃なら死亡
+		SetDeathVelocity(player);
+
 		behaviorRequest_ = Behavior::kDeath;
 
 		if (gameScene_) {
@@ -158,4 +159,17 @@ void ShieldEnemy::BehaviorGuardUpdate() {
 		isGuarding_ = false;
 		behaviorRequest_ = Behavior::kWalk;
 	}
+}
+
+void ShieldEnemy::ApplyWalkAnimation(float degree) {
+	float baseRotation = 0.0f;
+
+	if (direction_ == LRDirection::kLeft) {
+		baseRotation = 3.0f * std::numbers::pi_v<float> / 2.0f;
+	} else {
+		baseRotation = std::numbers::pi_v<float> / 2.0f;
+	}
+
+	worldTransform_.rotation_.y =
+		baseRotation + degree * std::numbers::pi_v<float> / 180.0f;
 }

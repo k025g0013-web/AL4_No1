@@ -67,12 +67,16 @@ void Enemy::Update() {
 	switch (behavior_) {
 	case Behavior::kWalk:
 		BehaviorWalkUpdate();
+		Move(false);
 		break;
 
 	case Behavior::kDeath:
 		BehaviorDeathUpdate();
 		break;
 	}
+
+	// 回転アニメーション
+	UpdateTurnAnimation();
 
 	// ワールド行列を更新
 	UpdateWorldTransform(worldTransform_);
@@ -84,19 +88,28 @@ void Enemy::Draw() {
 }
 
 
-void Enemy::Move() {
+// 移動処理
+void Enemy::Move(bool applyGravity) {
 	// 前方にブロックがあれば方向転換
 	if (IsFrontBlocked()) {
 		Turn();
 	}
 
-	// Y方向は一切動かさない
-	velocity_.y = 0.0f;
+	// 重力の適用
+	if (applyGravity) {
+		if (!onGround_) {
+			velocity_.y -= kGravity;
+		}
+	} else {
+		// 空中浮遊する敵はY方向に移動しない
+		velocity_.y = 0.0f;
+	}
 
-	// 現在の移動量を衝突判定へ渡す
+	// 移動量を設定
 	CollisionMapInfo collisionMapInfo;
 	collisionMapInfo.move = velocity_;
 
+	// マップとの衝突判定
 	collision_.CheckMap(
 		collisionMapInfo,
 		worldTransform_.translation_,
@@ -104,12 +117,14 @@ void Enemy::Move() {
 		kHeight
 	);
 
-	// 衝突判定後の移動量を反映
-	worldTransform_.translation_.x +=
-		collisionMapInfo.move.x;
+	// 移動
+	worldTransform_.translation_.x += collisionMapInfo.move.x;
+	worldTransform_.translation_.y += collisionMapInfo.move.y;
 
-	worldTransform_.translation_.y +=
-		collisionMapInfo.move.y;
+	// 重力を使用する敵のみ接地状態を更新
+	if (applyGravity) {
+		InstallationStateSwitching(collisionMapInfo);
+	}
 }
 
 // 歩行Behavior初期化
@@ -131,30 +146,66 @@ void Enemy::BehaviorWalkInitialize() {
 
 // 歩行Behavior更新
 void Enemy::BehaviorWalkUpdate() {
-	// 共通移動処理
-	Move();
-
 	// 経過時間
 	walkTimer_ += 1.0f / 60.0f;
 
-	float param =
-		std::sin(walkTimer_ / kWalkMotionTime * (2.0f * std::numbers::pi_v<float>));
+	float param = std::sin(
+		walkTimer_ / kWalkMotionTime *
+		(2.0f * std::numbers::pi_v<float>)
+	);
 
 	float degree =
-		kWalkMotionAngleStart + kWalkMotionAngleEnd * (param + 1.0f) / 2.0f;
+		kWalkMotionAngleStart +
+		kWalkMotionAngleEnd * (param + 1.0f) / 2.0f;
 
+	// 歩行アニメーションを適用
+	ApplyWalkAnimation(degree);
+}
+
+// 通常の敵の歩行アニメーション
+void Enemy::ApplyWalkAnimation(float degree) {
 	worldTransform_.rotation_.x =
 		degree * std::numbers::pi_v<float> / 180.0f;
 }
 
+void Enemy::SetDeathVelocity(const Player *player) {
+	if (!player) {
+		return;
+	}
+
+	const float playerX =
+		player->GetWorldTransform().translation_.x;
+	const float enemyX =
+		worldTransform_.translation_.x;
+
+	// プレイヤーと反対方向へ吹っ飛ぶ
+	if (enemyX < playerX) {
+		// 敵が左、プレイヤーが右
+		deathDirection_ = -1.0f;
+	} else {
+		// 敵が右、プレイヤーが左
+		deathDirection_ = 1.0f;
+	}
+}
+
 // 死亡Behavior初期化
 void Enemy::BehaviorDeathInitialize() {
-	// 死亡タイマーをリセット
 	deathTimer_ = 0;
 
-	// 吹き飛ぶ速度
-	velocity_.x = 0.1f;
+	// 吹っ飛ぶ速度
+	velocity_.x = 0.1f * deathDirection_;
 	velocity_.y = 0.3f;
+
+	worldTransform_.rotation_.x = 0.0f;
+	worldTransform_.rotation_.z = 0.0f;
+
+	// 回転速度と方向
+	deathRotationVelocity_.x = 0.0f;
+	deathRotationVelocity_.y = 0.0f;
+	deathRotationVelocity_.z = 0.2f * deathDirection_;
+
+	// 方向転換アニメーション停止
+	isTurning_ = false;
 }
 
 // 死亡Behavior更新
@@ -163,15 +214,16 @@ void Enemy::BehaviorDeathUpdate() {
 	deathTimer_++;
 
 	// 重力
-	velocity_.y -= 0.01f;
+	velocity_.y -= kGravity;
 
 	// 座標に反映
 	worldTransform_.translation_.x += velocity_.x;
 	worldTransform_.translation_.y += velocity_.y;
 
-	// 回転
-	worldTransform_.rotation_.z += 0.2f;
-	worldTransform_.rotation_.x += 0.1f;
+	// 死亡時の回転
+	worldTransform_.rotation_.x += deathRotationVelocity_.x;
+	worldTransform_.rotation_.y += deathRotationVelocity_.y;
+	worldTransform_.rotation_.z += deathRotationVelocity_.z;
 
 	// 一定時間経過したら消滅
 	if (deathTimer_ >= kDeathTime) {
@@ -181,43 +233,55 @@ void Enemy::BehaviorDeathUpdate() {
 
 // 前方に障害物があるか
 bool Enemy::IsFrontBlocked() const {
-	// マップチップが設定されていなければ判定しない
 	if (!mapChipField_) {
 		return false;
 	}
 
-	// 現在位置からマップチップ番号を取得
-	MapChipField::IndexSet indexSet =
-		mapChipField_->GetMapChipIndexSetByPosition(
-			worldTransform_.translation_
-		);
+	// 敵の中心位置
+	const Vector3 &position = worldTransform_.translation_;
 
-	int nextXIndex = static_cast<int>(indexSet.xIndex);
+	// 敵の前方にあるX座標
+	float frontX = position.x;
 
-	// 向いている方向の隣のマップチップを調べる
 	if (direction_ == LRDirection::kLeft) {
-		nextXIndex--;
+		frontX -= kWidth / 2.0f + 0.01f;
 	} else {
-		nextXIndex++;
+		frontX += kWidth / 2.0f + 0.01f;
 	}
 
-	// マップの外側
-	if (nextXIndex < 0 ||
-		nextXIndex >= static_cast<int>(
-			mapChipField_->GetNumBlockHorizontal())) {
-		// マップ外を壁として扱う
+	// 敵の上側と下側の座標
+	float topY = position.y + kHeight / 2.0f;
+	float bottomY = position.y - kHeight / 2.0f;
+
+	// 上下2点で前方のブロックを調べる
+	Vector3 topPosition = { frontX, topY, position.z };
+	Vector3 bottomPosition = { frontX, bottomY, position.z };
+
+	MapChipField::IndexSet topIndex =
+		mapChipField_->GetMapChipIndexSetByPosition(topPosition);
+
+	MapChipField::IndexSet bottomIndex =
+		mapChipField_->GetMapChipIndexSetByPosition(bottomPosition);
+
+	// マップの外側なら壁として扱う
+	int xIndex = static_cast<int>(topIndex.xIndex);
+
+	if (direction_ == LRDirection::kLeft) {
+		xIndex = static_cast<int>(bottomIndex.xIndex);
+	}
+
+	if (xIndex < 0 ||
+		xIndex >= static_cast<int>(mapChipField_->GetNumBlockHorizontal())) {
 		return true;
 	}
 
-	// 前方のマップチップを取得
-	MapChipType type =
+	// 上下いずれかのマスがブロックなら反転
+	return
 		mapChipField_->GetMapChipTypeByIndex(
-			static_cast<uint32_t>(nextXIndex),
-			indexSet.yIndex
-		);
-
-	// ブロックなら障害物あり
-	return type == MapChipType::kBlock;
+			topIndex.xIndex, topIndex.yIndex) == MapChipType::kBlock
+		||
+		mapChipField_->GetMapChipTypeByIndex(
+			bottomIndex.xIndex, bottomIndex.yIndex) == MapChipType::kBlock;
 }
 
 void Enemy::InstallationStateSwitching(
@@ -254,14 +318,19 @@ void Enemy::InstallationStateSwitching(
 // 向きを反転
 void Enemy::Turn() {
 	if (direction_ == LRDirection::kLeft) {
-		// 左 -> 右
+		// 左方向から右方向へ反転
 		direction_ = LRDirection::kRight;
 		velocity_.x = kWalkSpeed;
 	} else {
-		// 右 -> 左
+		// 右方向から左方向へ反転
 		direction_ = LRDirection::kLeft;
 		velocity_.x = -kWalkSpeed;
 	}
+
+	// 回転アニメーション開始
+	isTurning_ = true;
+	turnTimer_ = 0.0f;
+	turnStartRotationY_ = worldTransform_.rotation_.y;
 }
 
 // ワールド座標取得
@@ -284,6 +353,10 @@ void Enemy::OnCollision(Player *player) {
 	// プレイヤーの攻撃判定
 	if (player->IsAttack() ||
 		player->GetWorldTransform().scale_.z > 1.0f) {
+
+		SetDeathVelocity(player);
+
+
 		// 死亡状態へ
 		behaviorRequest_ = Behavior::kDeath;
 
@@ -300,5 +373,21 @@ void Enemy::OnCollision(Player *player) {
 		}
 
 		return;
+	}
+}
+
+void Enemy::UpdateTurnAnimation() {
+	if (isTurning_) {
+		turnTimer_ += 1.0f / 60.0f;
+
+		float t = turnTimer_ / kTurnTime;
+
+		if (t >= 1.0f) {
+			t = 1.0f;
+			isTurning_ = false;
+		}
+
+		worldTransform_.rotation_.y =
+			turnStartRotationY_ + kTurnAngle * t;
 	}
 }

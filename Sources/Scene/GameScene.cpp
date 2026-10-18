@@ -279,12 +279,17 @@ void GameScene::Draw() {
 	// エネミー
 	for (Enemy *enemy : enemies_) {
 		enemy->Draw();
+		enemy->SetMapChipField(mapChipField_);
 	}
 
 	// 盾エネミー
 	for (ShieldEnemy *shieldEnemy : shieldEnemies_) {
 		shieldEnemy->Draw();
+		shieldEnemy->SetMapChipField(mapChipField_);
 	}
+
+	// スカイドーム
+	skydome_->Draw();
 
 	// ヒットエフェクト
 	for (HitEffect *hitEffect : hitEffects_) {
@@ -295,10 +300,6 @@ void GameScene::Draw() {
 	for (GuardEffect *guardEffect : guardEffects_) {
 		guardEffect->Draw();
 	}
-
-
-	// スカイドーム
-	skydome_->Draw();
 
 	// ブロックの描画
 	for (std::vector<WorldTransform *> &worldTransformBlockLine : worldTransformBlocks_) {

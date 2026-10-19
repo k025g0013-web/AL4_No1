@@ -5,9 +5,12 @@
 
 #include "Math/UpdateWorldTransform.h"
 
+#include "Effect/HitEffect.h"
+#include "Effect/GuardEffect.h"
+
 using namespace KamataEngine;
 
-void ShieldEnemy::Initialize(Model *model, Camera *camera, const Vector3 &position) {
+void ShieldEnemy::Initialize(Model *model, KamataEngine::Camera *camera, const Vector3 &position) {
 	// 基底クラスの初期化
 	Enemy::Initialize(model, camera, position);
 
@@ -94,8 +97,8 @@ void ShieldEnemy::OnCollision(Player *player) {
 
 		// 正面からの攻撃ならガード
 		if (IsFrontAttack(player)) {
-			if (gameScene_) {
-				gameScene_->CreateGuardEffect(effectPos);
+			if (gameScene_ && gameScene_->GetEffectManager()) {
+				gameScene_->GetEffectManager()->Create<GuardEffect>(effectPos);
 			}
 
 			player->RequestKnockBack();
@@ -110,8 +113,8 @@ void ShieldEnemy::OnCollision(Player *player) {
 
 		behaviorRequest_ = Behavior::kDeath;
 
-		if (gameScene_) {
-			gameScene_->CreateHitEffect(effectPos);
+		if (gameScene_ && gameScene_->GetEffectManager()) {
+			gameScene_->GetEffectManager()->Create<HitEffect>(effectPos);
 		}
 
 		return;

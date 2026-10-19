@@ -16,9 +16,6 @@ HitEffect::~HitEffect() {}
 
 #pragma region 基本関数
 void HitEffect::Initialize(const Vector3& position) {
-	HitEffect::SetCamera(camera_);
-	HitEffect::SetModel(model_);
-
 	// 乱数生成
 	static std::random_device seedGenerator;
 	static std::mt19937_64 randomEngine(seedGenerator());

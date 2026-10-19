@@ -22,7 +22,7 @@ GameScene::~GameScene() {
 	}
 	worldTransformBlocks_.clear();
 
-	delete debugCamera_;
+	delete cameraManager_;
 
 	delete player_;
 	delete playerAttack_;
@@ -45,14 +45,13 @@ GameScene::~GameScene() {
 
 	delete mapChipField_;
 
-	delete cameraController_;
-
 	delete fade_;
 
-	for (HitEffect *hitEffect : hitEffects_) {
-		delete hitEffect;
-	}
-	hitEffects_.clear();
+	delete effectManager_;
+	effectManager_ = nullptr;
+
+	delete modelHitEffect_;
+	delete modelGuardEffect_;
 }
 
 #pragma region 初期化・更新・描画
@@ -60,12 +59,9 @@ void GameScene::Initialize(StageManager *stageManager) {
 	// 引数をメンバポインタに記録する
 	stageManager_ = stageManager;
 
-	// カメラの初期化
-	camera_.farZ = 2000.0f;
-	camera_.Initialize();
-
-	// デバッグカメラの生成
-	debugCamera_ = new DebugCamera(1280, 720);
+	// カメラマネージャーを生成
+	cameraManager_ = new CameraManager();
+	cameraManager_->Initialize(nullptr);
 
 	// 3Dモデルデータの生成
 	modelBlock_ = Model::Create();
@@ -77,6 +73,13 @@ void GameScene::Initialize(StageManager *stageManager) {
 	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
 	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
 
+	effectManager_ = new EffectManager();
+	effectManager_->Initialize(
+		modelHitEffect_,
+		modelGuardEffect_,
+		&cameraManager_->GetCamera()
+	);
+
 	// マップチップフィールド
 	mapChipField_ = new MapChipField;
 	const StageData &stageData = stageManager_->GetCurrentStageData();
@@ -86,37 +89,27 @@ void GameScene::Initialize(StageManager *stageManager) {
 	// CSVの配置を読み込んでブロック、プレイヤー、エネミーを生成・配置
 	GenerateBlocks();
 
+	// プレイヤー生成後に追従対象を設定
+	cameraManager_->SetTarget(player_);
+	cameraManager_->Reset();
+
 	// スカイドーム
 	skydome_ = new Skydome;
-	skydome_->Initialize(modelSkydome_, &camera_);
-
-	// カメラコントローラー
-	cameraController_ = new CameraController;
-	cameraController_->Initialize();
-	cameraController_->SetTarget(player_);
-	cameraController_->Reset();
-	cameraController_->SetMovableArea({ 20.35f, 177.6f, 11.0f, 100.0f });
+	skydome_->Initialize(modelSkydome_, &cameraManager_->GetCamera());
 
 	// フェード
 	fade_ = new Fade;
 	fade_->Initialize();
 	fade_->Start(Fade::Status::FadeIn, duration_);
-
-	// エフェクトクラスへのスタティック設定
-	HitEffect::SetModel(modelHitEffect_);
-	HitEffect::SetCamera(&camera_);
-	GuardEffect::SetModel(modelGuardEffect_);
-	GuardEffect::SetCamera(&camera_);
 }
 
 void GameScene::Update() {
-	// デバッグカメラの更新
-	debugCamera_->Update();
 
 #ifdef _DEBUG
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		isDebugCameraActive_ = !isDebugCameraActive_;
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+		cameraManager_->SetDebugCameraActive(!cameraManager_->IsDebugCameraActive());
 	}
+
 #endif
 
 #ifdef USE_IMGUI
@@ -167,25 +160,7 @@ void GameScene::Update() {
 		for (ShieldEnemy *shieldEnemy : shieldEnemies_)
 			shieldEnemy->Update();
 
-		for (HitEffect *hitEffect : hitEffects_)
-			hitEffect->Update();
-		hitEffects_.remove_if([](HitEffect *e) {
-			if (e->IsDead()) {
-				delete e;
-				return true;
-			}
-			return false;
-			});
-
-		for (GuardEffect *guardEffect : guardEffects_)
-			guardEffect->Update();
-		guardEffects_.remove_if([](GuardEffect *e) {
-			if (e->IsDead()) {
-				delete e;
-				return true;
-			}
-			return false;
-			});
+		effectManager_->Update();
 
 		// カメラ・行列更新
 		UpdateCameraAndTransforms();
@@ -202,24 +177,8 @@ void GameScene::Update() {
 			enemy->Update();
 		for (ShieldEnemy *shieldEnemy : shieldEnemies_)
 			shieldEnemy->Update();
-		for (HitEffect *hitEffect : hitEffects_)
-			hitEffect->Update();
-		hitEffects_.remove_if([](HitEffect *e) {
-			if (e->IsDead()) {
-				delete e;
-				return true;
-			}
-			return false;
-			});
-		for (GuardEffect *guardEffect : guardEffects_)
-			guardEffect->Update();
-		guardEffects_.remove_if([](GuardEffect *e) {
-			if (e->IsDead()) {
-				delete e;
-				return true;
-			}
-			return false;
-			});
+
+		effectManager_->Update();
 
 		if (deathParticles_ != nullptr)
 			deathParticles_->Update();
@@ -260,6 +219,9 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	Model::PreDraw(); // 開始
 
+	// スカイドーム
+	skydome_->Draw();
+
 	switch (phase_) {
 	case Phase::kFadeIn:
 	case Phase::kPlay:
@@ -288,18 +250,8 @@ void GameScene::Draw() {
 		shieldEnemy->SetMapChipField(mapChipField_);
 	}
 
-	// スカイドーム
-	skydome_->Draw();
-
-	// ヒットエフェクト
-	for (HitEffect *hitEffect : hitEffects_) {
-		hitEffect->Draw();
-	}
-
-	// ヒットエフェクト
-	for (GuardEffect *guardEffect : guardEffects_) {
-		guardEffect->Draw();
-	}
+	// エフェクト
+	effectManager_->Draw();
 
 	// ブロックの描画
 	for (std::vector<WorldTransform *> &worldTransformBlockLine : worldTransformBlocks_) {
@@ -307,7 +259,7 @@ void GameScene::Draw() {
 			if (!worldTransformBlock)
 				continue;
 
-			modelBlock_->Draw(*worldTransformBlock, camera_);
+			modelBlock_->Draw(*worldTransformBlock, cameraManager_->GetCamera());
 		}
 	}
 
@@ -347,7 +299,7 @@ void GameScene::GenerateBlocks() {
 			case MapChipType::kPlayer: {
 				// プレイヤーの位置をCSVの場所に初期化
 				player_ = new Player;
-				player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, position);
+				player_->Initialize(modelPlayer_, modelPlayerAttack_, &cameraManager_->GetCamera(), position);
 				player_->SetMapChipField(mapChipField_);
 				break;
 			}
@@ -357,14 +309,14 @@ void GameScene::GenerateBlocks() {
 				switch (subID) {
 				case 0: {
 					NormalEnemy *newEnemy = new NormalEnemy();
-					newEnemy->Initialize(modelEnemy_, &camera_, position);
+					newEnemy->Initialize(modelEnemy_, &cameraManager_->GetCamera(), position);
 					newEnemy->SetGameScene(this);
 					enemies_.push_back(newEnemy);
 					break;
 				}
 				case 1: {
 					ShieldEnemy *newShieldEnemy = new ShieldEnemy();
-					newShieldEnemy->Initialize(modelShieldEnemy_, &camera_, position);
+					newShieldEnemy->Initialize(modelShieldEnemy_, &cameraManager_->GetCamera(), position);
 					newShieldEnemy->SetGameScene(this);
 					shieldEnemies_.push_back(newShieldEnemy);
 					break;
@@ -378,17 +330,7 @@ void GameScene::GenerateBlocks() {
 }
 
 void GameScene::UpdateCameraAndTransforms() {
-	cameraController_->Update();
-
-	if (isDebugCameraActive_) {
-		const Camera &debugCamera = debugCamera_->GetCamera();
-		camera_.matView = debugCamera.matView;
-		camera_.matProjection = debugCamera.matProjection;
-		camera_.TransferMatrix();
-	} else {
-		camera_.translation_ = cameraController_->GetCameraTranslation();
-		camera_.UpdateMatrix();
-	}
+	cameraManager_->Update();
 
 	for (auto &worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform *worldTransformBlock : worldTransformBlockLine) {
@@ -462,20 +404,10 @@ void GameScene::ChangePhase() {
 			// 自キャラの座標にデスパーティクルを発生、初期化
 			modelDeathParticles_ = Model::CreateFromOBJ("deathParticle", true);
 			deathParticles_ = new DeathParticles;
-			deathParticles_->Initialize(modelDeathParticles_, &camera_, deathParticlesPosition);
+			deathParticles_->Initialize(modelDeathParticles_, &cameraManager_->GetCamera(), deathParticlesPosition);
 		}
 		break;
 	case Phase::kDeath:
 		break;
 	}
 };
-
-void GameScene::CreateHitEffect(const KamataEngine::Vector3 &position) {
-	HitEffect *newHitEffect = HitEffect::Create(position);
-	hitEffects_.push_back(newHitEffect);
-}
-
-void GameScene::CreateGuardEffect(const KamataEngine::Vector3 &position) {
-	GuardEffect *newGuardEffect = GuardEffect::Create(position);
-	guardEffects_.push_back(newGuardEffect);
-}

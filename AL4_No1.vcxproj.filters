@@ -19,9 +19,6 @@
     <ClCompile Include="Sources\MapChipField.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\CameraController.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Sources\StageManager.cpp">
       <Filter>Sources</Filter>
@@ -62,6 +59,21 @@
     <ClCompile Include="Sources\Object\Enemy\NormalEnemy.cpp">
       <Filter>Sources\Object\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Camera\GameCamera.cpp">
+      <Filter>Sources\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Camera\GameNormalCamera.cpp">
+      <Filter>Sources\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Camera\GameDebugCamera.cpp">
+      <Filter>Sources\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Manager\CameraManager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Manager\EffectManager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -84,6 +96,12 @@
     </Filter>
     <Filter Include="Sources\Object\Enemy">
       <UniqueIdentifier>{0586e740-1347-49f0-a677-e6bfe86214ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Camera">
+      <UniqueIdentifier>{b5f84544-3e51-4843-a97e-35c876e780a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Manager">
+      <UniqueIdentifier>{8a809251-f003-4b7c-a06b-a1b84a3e13d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -109,9 +127,6 @@
       <Filter>Sources\Menu</Filter>
     </ClInclude>
     <ClInclude Include="Sources\MapChipField.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\CameraController.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\StageManager.h">
@@ -170,6 +185,24 @@
     </ClInclude>
     <ClInclude Include="Sources\Math\AABB.h">
       <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Camera\GameCamera.h">
+      <Filter>Sources\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Camera\GameNormalCamera.h">
+      <Filter>Sources\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Camera\GameDebugCamera.h">
+      <Filter>Sources\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Manager\CameraManager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Manager\EffectManager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\Effect.h">
+      <Filter>Sources\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,8 +6,7 @@
 
 #include "Effect/DeathParticles.h"
 #include "Effect/Fade.h"
-#include "Effect/HitEffect.h"
-#include "Effect/GuardEffect.h"
+#include "Manager/EffectManager.h"
 #include "Effect/Skydome.h"
 
 #include "Object/Player.h"
@@ -15,7 +14,7 @@
 #include "Object/Enemy/ShieldEnemy.h"
 
 #include "MapChipField.h"
-#include "CameraController.h"
+#include "Manager/CameraManager.h"
 
 class StageManager;
 
@@ -51,24 +50,22 @@ public:
 	// フェーズの切り替え
 	void ChangePhase();
 
-	// ヒットエフェクトを生成
-	void CreateHitEffect(const KamataEngine::Vector3 &position);
-
-	// ガードエフェクトを生成
-	void CreateGuardEffect(const KamataEngine::Vector3 &position);
-
 	// 終了フラグのgetter
 	bool IsFinished() const override { return finished_; };
 
 	// リロード要求フラグのgetter
 	bool hasReloadRequested() const { return reloadRequested_; };
 
+	EffectManager *GetEffectManager() const {
+		return effectManager_;
+	}
+
 private:
 	// ステージマネージャ参照用のポインタ
 	StageManager *stageManager_ = nullptr;
 
 	// カメラ
-	KamataEngine::Camera camera_;
+	CameraManager *cameraManager_ = nullptr;
 
 	// 3Dモデルデータ
 	KamataEngine::Model *modelBlock_ = nullptr;
@@ -78,9 +75,6 @@ private:
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
-
-	// デバッグカメラ
-	KamataEngine::DebugCamera *debugCamera_ = nullptr;
 
 	// プレイヤー
 	Player *player_ = nullptr;
@@ -104,9 +98,6 @@ private:
 	// マップチップフィールド
 	MapChipField *mapChipField_ = nullptr;
 
-	// カメラコントローラー
-	CameraController *cameraController_ = nullptr;
-
 	// デス演出
 	DeathParticles *deathParticles_ = nullptr;
 	KamataEngine::Model *modelDeathParticles_ = nullptr;
@@ -115,12 +106,11 @@ private:
 	Fade *fade_ = nullptr;
 	float duration_ = 1.0f;
 
-	// ヒットエフェクト
-	std::list<HitEffect *> hitEffects_;
-	KamataEngine::Model *modelHitEffect_ = nullptr;
+	// エフェクトマネージャ
+	EffectManager *effectManager_ = nullptr;
 
-	// ガードエフェクト
-	std::list<GuardEffect *> guardEffects_;
+	// エフェクトモデル
+	KamataEngine::Model *modelHitEffect_ = nullptr;
 	KamataEngine::Model *modelGuardEffect_ = nullptr;
 
 	// 終了フラグ

@@ -16,9 +16,6 @@ GuardEffect::~GuardEffect() {}
 
 #pragma region 基本関数
 void GuardEffect::Initialize(const Vector3& position) {
-	GuardEffect::SetCamera(camera_);
-	GuardEffect::SetModel(model_);
-
 	// 乱数生成
 	static std::random_device seedGenerator;
 	static std::mt19937_64 randomEngine(seedGenerator());

@@ -9,9 +9,11 @@
 
 #include "Math/UpdateWorldTransform.h"
 
+#include "Effect/HitEffect.h"
+
 using namespace KamataEngine;
 
-void Enemy::Initialize(Model *model, Camera *camera, const Vector3 &position) {
+void Enemy::Initialize(Model *model, KamataEngine::Camera *camera, const Vector3 &position) {
 #ifdef _DEBUG
 	assert(model);
 #endif
@@ -368,8 +370,8 @@ void Enemy::OnCollision(Player *player) {
 		};
 
 		// ヒットエフェクト生成
-		if (gameScene_) {
-			gameScene_->CreateHitEffect(effectPos);
+		if (gameScene_ && gameScene_->GetEffectManager()) {
+			gameScene_->GetEffectManager()->Create<HitEffect>(effectPos);
 		}
 
 		return;

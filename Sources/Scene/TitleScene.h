@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Scene.h"
-#include "Scene/SceneManager.h"
+#include "Manager/SceneManager.h"
 
-#include "Menu/TitleMenu.h"
+#include "Game/Menu/TitleMenu.h"
 
 class TitleScene final : public Scene {
 public:

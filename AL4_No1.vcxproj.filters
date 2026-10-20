@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Sources\Scene\SceneManager.cpp">
-      <Filter>Sources\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Scene\TitleScene.cpp">
       <Filter>Sources\Scene</Filter>
     </ClCompile>
@@ -13,19 +10,7 @@
     <ClCompile Include="Sources\Scene\ResultScene.cpp">
       <Filter>Sources\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Menu\TitleMenu.cpp">
-      <Filter>Sources\Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\MapChipField.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sources\StageManager.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Player.cpp">
-      <Filter>Sources\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Effect\DeathParticles.cpp">
       <Filter>Sources\Effect</Filter>
     </ClCompile>
@@ -37,15 +22,6 @@
     </ClCompile>
     <ClCompile Include="Sources\Effect\HitEffect.cpp">
       <Filter>Sources\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Effect\Skydome.cpp">
-      <Filter>Sources\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Effect\TitleLogo.cpp">
-      <Filter>Sources\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Math\Collision.cpp">
-      <Filter>Sources\Math</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Math\Easing.cpp">
       <Filter>Sources\Math</Filter>
@@ -74,6 +50,33 @@
     <ClCompile Include="Sources\Manager\EffectManager.cpp">
       <Filter>Sources\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Game\Menu\TitleMenu.cpp">
+      <Filter>Sources\Game\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Map\CollisionMap.cpp">
+      <Filter>Sources\Game\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Map\MapChipField.cpp">
+      <Filter>Sources\Game\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Manager\StageManager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Manager\SceneManager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TitleLogo.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Manager\DebugSettingManager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Player\Player.cpp">
+      <Filter>Sources\Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Skydome\Skydome.cpp">
+      <Filter>Sources\Object\Skydome</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -81,9 +84,6 @@
     </Filter>
     <Filter Include="Sources\Scene">
       <UniqueIdentifier>{f920a2ec-7c69-4f6b-b4b5-ceedd95eab47}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Menu">
-      <UniqueIdentifier>{c97778f1-399f-4b68-9740-88b70b3d60a2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Object">
       <UniqueIdentifier>{2ce07804-ff34-49b0-956a-3f42a8bfae1c}</UniqueIdentifier>
@@ -103,11 +103,26 @@
     <Filter Include="Sources\Manager">
       <UniqueIdentifier>{8a809251-f003-4b7c-a06b-a1b84a3e13d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Game">
+      <UniqueIdentifier>{c40f7f1f-70c8-4b8f-a90b-fa32f9735cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Menu">
+      <UniqueIdentifier>{c97778f1-399f-4b68-9740-88b70b3d60a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Map">
+      <UniqueIdentifier>{9492eeff-d76d-493f-8c55-5e3e5c941b39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Object\Common">
+      <UniqueIdentifier>{d8afdcfe-32c4-4d0b-856b-f2a462fa7b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Object\Player">
+      <UniqueIdentifier>{da881e99-a0f2-4158-8f43-f873cd03985f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Object\Skydome">
+      <UniqueIdentifier>{b0c77532-400b-423b-a5c4-85bc9a4399ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Scene\SceneManager.h">
-      <Filter>Sources\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Scene\TitleScene.h">
       <Filter>Sources\Scene</Filter>
     </ClInclude>
@@ -120,21 +135,6 @@
     <ClInclude Include="Sources\Scene\Scene.h">
       <Filter>Sources\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Menu\Menu.h">
-      <Filter>Sources\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Menu\TitleMenu.h">
-      <Filter>Sources\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\MapChipField.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\StageManager.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Player.h">
-      <Filter>Sources\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Effect\DeathParticles.h">
       <Filter>Sources\Effect</Filter>
     </ClInclude>
@@ -146,15 +146,6 @@
     </ClInclude>
     <ClInclude Include="Sources\Effect\HitEffect.h">
       <Filter>Sources\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Effect\Skydome.h">
-      <Filter>Sources\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Effect\TitleLogo.h">
-      <Filter>Sources\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Math\Collision.h">
-      <Filter>Sources\Math</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Math\Easing.h">
       <Filter>Sources\Math</Filter>
@@ -177,12 +168,6 @@
     <ClInclude Include="Sources\Object\Enemy\NormalEnemy.h">
       <Filter>Sources\Object\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\LRDirection.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\CollisionMapInfo.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Math\AABB.h">
       <Filter>Sources\Math</Filter>
     </ClInclude>
@@ -203,6 +188,39 @@
     </ClInclude>
     <ClInclude Include="Sources\Effect\Effect.h">
       <Filter>Sources\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Menu\Menu.h">
+      <Filter>Sources\Game\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Menu\TitleMenu.h">
+      <Filter>Sources\Game\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Map\CollisionMap.h">
+      <Filter>Sources\Game\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Map\MapChipField.h">
+      <Filter>Sources\Game\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Manager\StageManager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Manager\SceneManager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TitleLogo.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Manager\DebugSettingManager.h">
+      <Filter>Sources\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Common\LRDirection.h">
+      <Filter>Sources\Object\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Player\Player.h">
+      <Filter>Sources\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Skydome\Skydome.h">
+      <Filter>Sources\Object\Skydome</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #include "TitleScene.h"
 using namespace KamataEngine;
 
-#include "Menu/TitleMenu.h"
+#include "Game/Menu/TitleMenu.h"
 
 void TitleScene::Initialize(SceneManager *sceneManager) {
 	isFinished_ = false;	// 終了フラグ初期化

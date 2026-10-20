@@ -1,10 +1,12 @@
 #pragma once
-#include "Math/AABB.h"
 #include "KamataEngine.h"
-#include "MapChipField.h"
-#include "LRDirection.h"
-#include "CollisionMapInfo.h"
 #include <3d\Model.h>
+
+#include "Game/Map/MapChipField.h"
+#include "Game/Map/CollisionMap.h"
+
+#include "Object/Common/LRDirection.h"
+#include "Math/AABB.h"
 
 class Enemy;
 class ShieldEnemy;

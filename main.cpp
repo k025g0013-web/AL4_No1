@@ -1,35 +1,11 @@
 #include "KamataEngine.h"
 #include <Windows.h>
 
-#include "Scene/SceneManager.h"
-#include "StageManager.h"
+#include "Manager/SceneManager.h"
+#include "Manager/StageManager.h"
+#include "Manager/DebugSettingManager.h"
 
 using namespace KamataEngine;
-
-// グローバル変数
-StageManager *stageManager = nullptr; // ステージマネージャ
-
-// 設定ファイルの読み込み
-static void LoadDebugSettings() {
-	std::ifstream file("debugSettings.ini");
-	if (!file.is_open()) {
-		return;
-	}
-
-	std::string line;
-	while (std::getline(file, line)) {
-		if (line.empty()) continue;
-
-		std::stringstream lineStream(line);
-		std::string key, value;
-
-		if (lineStream >> key >> value) {
-			if (key == "InitialStage") {
-				stageManager->SetCurrentStageIndexByName(value);
-			}
-		}
-	}
-}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -41,9 +17,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// エンジンの初期化
 	KamataEngine::Initialize(L"Title");
 
+	// ステージマネージャ
+	StageManager *stageManager = nullptr; 
 	stageManager = new StageManager;
 	stageManager->LoadStageData();
-	LoadDebugSettings();
+
+	// デバッグ設定の読み込み・管理
+	LoadDebugSettings(stageManager);
 
 	// SceneManager生成/初期化
 	SceneManager* sceneManager = new SceneManager();

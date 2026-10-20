@@ -1,7 +1,7 @@
 
 #include "GameNormalCamera.h"
 
-#include "Object/Player.h"
+#include "Object/Player/Player.h"
 #include "Math/Vector.h"
 
 #include <algorithm>

@@ -1,4 +1,4 @@
-#include "Collision.h"
+#include "CollisionMap.h"
 
 #include <algorithm>
 #include <cmath>
@@ -7,7 +7,7 @@ using namespace KamataEngine;
 
 
 // マップチップとの当たり判定
-void Collision::CheckMap(
+void CollisionMap::CheckMap(
     CollisionMapInfo &info,
     const Vector3 &position,
     float width,
@@ -28,7 +28,7 @@ void Collision::CheckMap(
 
 
 // 上方向の当たり判定
-void Collision::CheckTop(
+void CollisionMap::CheckTop(
     CollisionMapInfo &info,
     const Vector3 &position,
     const Vector3 &move,
@@ -110,7 +110,7 @@ void Collision::CheckTop(
 
 
 // 下方向の当たり判定
-void Collision::CheckBottom(
+void CollisionMap::CheckBottom(
     CollisionMapInfo &info,
     const Vector3 &position,
     const Vector3 &move,
@@ -192,7 +192,7 @@ void Collision::CheckBottom(
 
 
 // 右方向の当たり判定
-void Collision::CheckRight(
+void CollisionMap::CheckRight(
     CollisionMapInfo &info,
     const Vector3 &position,
     const Vector3 &move,
@@ -273,7 +273,7 @@ void Collision::CheckRight(
 }
 
 // 左方向の当たり判定
-void Collision::CheckLeft(
+void CollisionMap::CheckLeft(
     CollisionMapInfo &info,
     const Vector3 &position,
     const Vector3 &move,
@@ -355,7 +355,7 @@ void Collision::CheckLeft(
 
 
 // 指定した角の座標を計算
-Vector3 Collision::CornerPosition(
+Vector3 CollisionMap::CornerPosition(
     const Vector3 &center,
     Corner corner,
     float width,
@@ -380,7 +380,7 @@ Vector3 Collision::CornerPosition(
 
 
 // 指定座標のマップチップがブロックか
-bool Collision::IsBlock(const Vector3 &position) const {
+bool CollisionMap::IsBlock(const Vector3 &position) const {
 
     return GetMapChipType(position)
         == MapChipType::kBlock;
@@ -388,7 +388,7 @@ bool Collision::IsBlock(const Vector3 &position) const {
 
 
 // 指定座標のマップチップ種類を取得
-MapChipType Collision::GetMapChipType(
+MapChipType CollisionMap::GetMapChipType(
     const Vector3 &position) const {
 
     if (!mapChipField_) {
@@ -406,7 +406,7 @@ MapChipType Collision::GetMapChipType(
 
 
 // 移動量から探索回数を計算
-uint32_t Collision::CalculateCheckCount(
+uint32_t CollisionMap::CalculateCheckCount(
     const Vector3 &move) const {
 
     float blockWidth =

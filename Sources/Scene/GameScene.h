@@ -1,20 +1,21 @@
 #pragma once
 #include "KamataEngine.h"
-#include <vector>
-
 #include "Scene.h"
+
+#include "Manager/EffectManager.h"
 
 #include "Effect/DeathParticles.h"
 #include "Effect/Fade.h"
-#include "Manager/EffectManager.h"
-#include "Effect/Skydome.h"
 
-#include "Object/Player.h"
+#include "Object/Player/Player.h"
 #include "Object/Enemy/Enemy.h"
 #include "Object/Enemy/ShieldEnemy.h"
+#include "Object/Skydome/Skydome.h"
 
-#include "MapChipField.h"
+#include "Game/Map/MapChipField.h"
 #include "Manager/CameraManager.h"
+
+#include <vector>
 
 class StageManager;
 

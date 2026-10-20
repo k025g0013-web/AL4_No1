@@ -1,8 +1,8 @@
 #include "GameScene.h"
-#include "Effect/HitEffect.h"
+#include "Manager/StageManager.h"
+
 #include "Math/UpdateWorldTransform.h"
-#include "Math/Collision.h"
-#include "StageManager.h"
+#include "Game/Map/CollisionMap.h"
 
 #include "Object/Enemy/NormalEnemy.h"
 #include "Object/Enemy/ShieldEnemy.h"

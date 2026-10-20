@@ -3,10 +3,10 @@
 #include "KamataEngine.h"
 #include <3d\Model.h>
 
-#include "MapChipField.h"
-#include "Math/Collision.h"
-#include "LRDirection.h"
-#include "CollisionMapInfo.h"
+#include "Game/Map/MapChipField.h"
+#include "Game/Map/CollisionMap.h"
+
+#include "Object/Common/LRDirection.h"
 
 #include <numbers>
 
@@ -111,7 +111,7 @@ protected:
     /* 衝突判定
     --------------------*/
     // マップとの衝突判定
-    Collision collision_;
+    CollisionMap collision_;
 
     /* 移動
     --------------------*/

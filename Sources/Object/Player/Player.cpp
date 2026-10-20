@@ -344,7 +344,7 @@ void Player::MoveInput() {
 				// 左移動中の右入力
 				if (velocity_.x < 0.0f) {
 					// 速度と逆方向に入力時は急ブレーキ
-					velocity_.x *= (1.0f - kAcceleration);
+					velocity_.x *= (1.0f - kTurnBrake);
 				}
 				acceleration.x += kAcceleration;
 
@@ -360,7 +360,7 @@ void Player::MoveInput() {
 				// 左移動中の右入力
 				if (velocity_.x > 0.0f) {
 					// 速度と逆方向に入力時は急ブレーキ
-					velocity_.x *= (1.0f - kAcceleration);
+					velocity_.x *= (1.0f - kTurnBrake);
 				}
 				acceleration.x -= kAcceleration;
 
@@ -381,6 +381,11 @@ void Player::MoveInput() {
 		} else {
 			// 非入力時は速度減衰をかける
 			velocity_.x *= (1.0f - kAttenuation);
+
+			// 微小な速度は0にスナップ
+			if (std::abs(velocity_.x) < kStopThreshold) {
+				velocity_.x = 0.0f;
+			}
 		}
 		if (Input::GetInstance()->PushKey(DIK_UP)) {
 			// ジャンプ初速
@@ -393,6 +398,38 @@ void Player::MoveInput() {
 			onGround_ = false;
 		}
 	} else {
+		// 空中での左右移動
+		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
+			float dir = Input::GetInstance()->PushKey(DIK_RIGHT) ? 1.0f : -1.0f;
+
+			// 速度と逆方向に入力時はブレーキ
+			if (velocity_.x * dir < 0.0f) {
+				velocity_.x *= (1.0f - kTurnBrake);
+			}
+			velocity_.x += dir * kAirAcceleration;
+
+			// 向きの切り替え
+			LRDirection newDirection = (dir > 0.0f) ? LRDirection::kRight : LRDirection::kLeft;
+			if (lrDirection_ != newDirection) {
+				lrDirection_ = newDirection;
+				turnFirstRotationY_ = (dir > 0.0f) ? std::numbers::pi_v<float> *3.0f / 2.0f : std::numbers::pi_v<float> / 2.0f;
+				turnTimer_ = kTimeTurn;
+			}
+
+			velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
+		} else {
+			// 非入力時は空中用の弱い減衰
+			velocity_.x *= (1.0f - kAirAttenuation);
+			if (std::abs(velocity_.x) < kStopThreshold) {
+				velocity_.x = 0.0f;
+			}
+		}
+
+		// 可変ジャンプ: 上昇中にボタンを離したら上昇を弱める
+		if (!Input::GetInstance()->PushKey(DIK_UP) && velocity_.y > 0.0f) {
+			velocity_.y *= kJumpCutRate;
+		}
+
 		// 落下状態
 		velocity_.y += -kGravityAcceleration;
 		// 落下速度制限

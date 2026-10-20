@@ -97,87 +97,114 @@ public:
 	void RequestKnockBack();
 
 private:
-	// 振る舞い
+private:
+	/* 振る舞い
+	--------------------*/
+	// 現在の振る舞い
 	Behavior behavior_ = Behavior::kRoot;
+	// 次の振る舞いのリクエスト
 	Behavior behaviorRequest_ = Behavior::kUnknown;
+	// デスフラグ
+	bool isDead_ = false;
 
-	// 攻撃行動
-	uint32_t attackParameter_ = 0;
+	/* 攻撃行動
+	--------------------*/
+	// 攻撃フェーズ
 	AttackPhase attackPhase_ = AttackPhase::kCharge;
+	// 攻撃の経過フレーム数
+	uint32_t attackParameter_ = 0;
+	// 溜め時間
 	float chargeTime_ = 7.0f;
+	// 攻撃時間
 	float attackTime_ = 10.0f;
+	// クールタイム
 	float coolTime_ = 5.0f;
 
-	// ワールド変換データ
+	/* ワールド変換
+	--------------------*/
+	// キャラクターのワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
+	// 攻撃オブジェクトのワールド変換データ
 	KamataEngine::WorldTransform worldTransformAttack_;
 
-	// モデル
-	KamataEngine::Model* model_ = nullptr;
-	KamataEngine::Model* modelAttack_ = nullptr;
-
+	/* モデル・カメラ
+	--------------------*/
+	// キャラクターのモデル
+	KamataEngine::Model *model_ = nullptr;
+	// 攻撃オブジェクトのモデル
+	KamataEngine::Model *modelAttack_ = nullptr;
 	// カメラ
-	KamataEngine::Camera* camera_ = nullptr;
+	KamataEngine::Camera *camera_ = nullptr;
 
+	/* 移動・速度
+	--------------------*/
 	// 速度
 	KamataEngine::Vector3 velocity_ = {};
+	// 最大走行速度
+	static inline const float kLimitRunSpeed = 0.3f;
+	// 加速度
+	static inline const float kAcceleration = 0.06f;
+	// 速度減衰率
+	static inline const float kAttenuation = 0.3f;
+	// 逆入力時のブレーキ率
+	static inline const float kTurnBrake = 0.5f;
+	// 空中での加速度
+	static inline const float kAirAcceleration = 0.045f;
+	// 空中での速度減衰率
+	static inline const float kAirAttenuation = 0.05f;
+	// 停止判定の閾値
+	static inline const float kStopThreshold = 0.01f;
+	// ジャンプ中断時の上昇速度減衰率
+	static inline const float kJumpCutRate = 0.5f;
 
-	// 慣性
-	static inline const float kAcceleration = 0.05f;
-
-	// 速度減衰
-	static inline const float kAttenuation = 0.2f;
-
-	// 最大速度制限
-	static inline const float kLimitRunSpeed = 2.0f;
-
-	// 左右
+	/* 旋回
+	--------------------*/
+	// キャラクターの向き
 	LRDirection lrDirection_ = LRDirection::kRight;
-
 	// 旋回開始時の角度
 	float turnFirstRotationY_ = 0.0f;
 	// 旋回タイマー
 	float turnTimer_ = 0.0f;
-
-	// 旋回時間<秒>
+	// 旋回時間（秒）
 	static inline const float kTimeTurn = 0.3f;
 
+	/* ジャンプ・接地
+	--------------------*/
 	// 接地状態フラグ
 	bool onGround_ = true;
+	// ジャンプ初速（上方向）
+	static inline const float kJumpAcceleration = 0.7f;
+	// 重力加速度（下方向）
+	static inline const float kGravityAcceleration = 0.04f;
+	// 最大落下速度（下方向）
+	static inline const float kLimitFallSpeed = 0.7f;
 
-	// 重力加速度 (下方向)
-	static inline const float kGravityAcceleration = 0.05f;
-	// 最大落下速度 (下方向)
-	static inline const float kLimitFallSpeed = 1.0f;
-	// ジャンプ初速 (上方向)
-	static inline const float kJumpAcceleration = 1.0f;
-
+	/* マップ・地形衝突
+	--------------------*/
 	// マップチップによるフィールド
-	MapChipField* mapChipField_ = nullptr;
-
-	// キャラクターの当たり判定のサイズ
-	static inline const float kWidth = 1.9f;
-	static inline const float kHeight = 1.9f;
-
-	// 微小な余白
+	MapChipField *mapChipField_ = nullptr;
+	// マップチップとの衝突判定結果に使用する微小な余白
 	static inline const float kBlank = 0.0001f;
-
 	// 着地時の速度減衰率
 	static inline const float kAttenuationLanding = 0.1f;
-
-	// 着地時の速度減衰率
+	// 壁接触時の速度減衰率
 	static inline const float kAttenuationWall = 0.75f;
 
-	// デスフラグ
-	bool isDead_ = false;
+	/* キャラクターの当たり判定
+	--------------------*/
+	// キャラクターの幅
+	static inline const float kWidth = 1.9f;
+	// キャラクターの高さ
+	static inline const float kHeight = 1.9f;
 
-	// ノックバック時間
+	/* ノックバック・無敵状態
+	--------------------*/
+	// ノックバック時間の経過フレーム数
 	uint32_t knockBackTimer_ = 0;
+	// ノックバック時間
 	static inline const uint32_t kKnockBackTime = 10;
-
-	// ノックバックフラグ
+	// 無敵状態フラグ
 	bool isInvincible_ = false;
-
-	// ノックバック速度
+	// ノックバック時の速度
 	KamataEngine::Vector3 knockBackVelocity_ = {};
 };

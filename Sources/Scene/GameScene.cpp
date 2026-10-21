@@ -52,12 +52,20 @@ GameScene::~GameScene() {
 
 	delete modelHitEffect_;
 	delete modelGuardEffect_;
+
+	delete goal_;
 }
 
 #pragma region 初期化・更新・描画
 void GameScene::Initialize(StageManager *stageManager) {
 	// 引数をメンバポインタに記録する
 	stageManager_ = stageManager;
+
+	// シーンの状態を初期化
+	finished_ = false;
+	isCleared_ = false;
+	phase_ = Phase::kFadeIn;
+
 
 	// カメラマネージャーを生成
 	cameraManager_ = new CameraManager();
@@ -72,6 +80,7 @@ void GameScene::Initialize(StageManager *stageManager) {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
 	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
+	modelGoal_ = Model::CreateFromOBJ("goal", true);
 
 	effectManager_ = new EffectManager();
 	effectManager_->Initialize(
@@ -138,6 +147,10 @@ void GameScene::Update() {
 		skydome_->Update();
 		player_->Update();
 
+		// ゴール更新
+		goal_->Update();
+
+
 		// Rキーでリセット（リロード）
 		if (Input::GetInstance()->TriggerKey(DIK_R)) {
 			// キャラクター等の再配置を含めて再初期化
@@ -177,6 +190,9 @@ void GameScene::Update() {
 			enemy->Update();
 		for (ShieldEnemy *shieldEnemy : shieldEnemies_)
 			shieldEnemy->Update();
+
+		// ゴール更新
+		goal_->Update();
 
 		effectManager_->Update();
 
@@ -249,6 +265,10 @@ void GameScene::Draw() {
 		shieldEnemy->Draw();
 		shieldEnemy->SetMapChipField(mapChipField_);
 	}
+
+	// ゴール
+	goal_->Draw();
+
 
 	// エフェクト
 	effectManager_->Draw();
@@ -324,6 +344,11 @@ void GameScene::GenerateBlocks() {
 				}
 				break;
 			}
+			case MapChipType::kGoal: {
+				goal_ = new Goal();
+				goal_->Initialize(modelGoal_, &cameraManager_->GetCamera(), position);
+				break;
+			}
 			}
 		}
 	}
@@ -389,6 +414,19 @@ void GameScene::CheckAllCollision() {
 		}
 	}
 #pragma endregion
+	// プレイヤーとゴールの当たり判定
+	if (player_ && goal_ && phase_ == Phase::kPlay) {
+		const Vector3 playerPosition = player_->GetWorldPosition();
+
+		if (goal_->CheckCollision(playerPosition, 2.0f, 2.0f)) {
+			// クリアフラグを設定
+			isCleared_ = true;
+
+			// フェードアウト開始
+			phase_ = Phase::kFadeOut;
+			fade_->Start(Fade::Status::FadeOut, duration_);
+		}
+	}
 };
 
 void GameScene::ChangePhase() {

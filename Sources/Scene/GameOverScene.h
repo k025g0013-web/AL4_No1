@@ -2,10 +2,10 @@
 
 #include "Scene.h"
 
-class ResultScene final : public Scene {
+class GameOverScene final : public Scene {
 public:
-	ResultScene() = default;
-	~ResultScene() override = default;
+	GameOverScene() = default;
+	~GameOverScene() override = default;
 
 	void Initialize();
 	void Update() override;

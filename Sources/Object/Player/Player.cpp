@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "State/PlayerState.h"
 #include "State/RootState.h"
+#include "State/KnockBackState.h"
 
 #include "Math/Easing.h"
 #include "Math/UpdateWorldTransform.h"
@@ -21,7 +22,7 @@ Player::~Player() {
 
 #pragma region 初期化・更新・描画
 // 初期化処理
-void Player::Initialize(Model* model, Model* modelAttack, Camera* camera, const Vector3& position) {
+void Player::Initialize(Model *model, Model *modelAttack, Camera *camera, const Vector3 &position) {
 	// nullポインタチェック
 	assert(model);
 
@@ -42,7 +43,7 @@ void Player::Initialize(Model* model, Model* modelAttack, Camera* camera, const 
 
 	// 初期回転
 	lrDirection_ = LRDirection::kRight;
-	float destinationRotationYTable[] = {std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
+	float destinationRotationYTable[] = { std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> *3.0f / 2.0f };
 	worldTransform_.rotation_.y = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
 	worldTransformAttack_.rotation_.y = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
 
@@ -105,6 +106,27 @@ void Player::Update() {
 		state_->Update(*this);
 	}
 
+	// ダメージ後の無敵時間を更新
+	if (damageInvincibleTimer_ > 0.0f) {
+		damageInvincibleTimer_ -= 1.0f / 60.0f;
+
+		if (damageInvincibleTimer_ < 0.0f) {
+			damageInvincibleTimer_ = 0.0f;
+		}
+	}
+
+	// ダメージ演出の更新
+	if (damageAnimationTimer_ > 0.0f) {
+		damageAnimationTimer_ -= 1.0f / 60.0f;
+
+		if (damageAnimationTimer_ < 0.0f) {
+			damageAnimationTimer_ = 0.0f;
+		}
+	}
+
+	// ダメージ演出の更新
+	DamageAnimation();
+
 	// 行列更新
 	UpdateWorldTransform(worldTransform_);
 
@@ -113,6 +135,13 @@ void Player::Update() {
 
 // 描画処理
 void Player::Draw() {
+	// 無敵時間中はタイマーの値を使って点滅させる
+	if (damageInvincibleTimer_ > 0.0f) {
+		if (static_cast<int>(damageInvincibleTimer_ * 20.0f) % 2 == 0) {
+			return;
+		}
+	}
+
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, *camera_);
 
@@ -171,8 +200,36 @@ Vector3 Player::CornerPosition(const Vector3 &center, Corner corner) const {
 
 	default:
 		return center;
+	}
+}
+
+void Player::DamageAnimation() {
+	if (isDamage_) {
+		// ダメージ演出中
+		if (damageAnimationTimer_ > 0.0f) {
+			// 進行度を 0.0f ～ 1.0f に変換
+			float damageT =
+				1.0f - damageAnimationTimer_ / kDamageAnimationTime;
+
+			// 0 → 1 → 0 と変化する波形
+			float pulse = std::sin(
+				damageT * std::numbers::pi_v<float>
+			);
+
+			// Z軸を回転させて、ダメージを受けたように傾ける
+			worldTransform_.rotation_.z = pulse * 0.35f;
+
+			// 縮んでから元の大きさに戻す
+			float scale = 1.0f - pulse * 0.2f;
+			worldTransform_.scale_ = { scale, scale, 1.0f };
+		} else {
+			// 演出終了後は元の状態に戻す
+			worldTransform_.rotation_.z = 0.0f;
+			worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
+			isDamage_ = false;
 		}
 	}
+}
 
 #pragma region 更新処理全体の流れ
 // 移動入力
@@ -185,7 +242,7 @@ void Player::MoveInput() {
 			Vector3 acceleration = {};
 			if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 				attackDirection_ = LRDirection::kRight;
-				
+
 				// 左移動中の右入力
 				if (velocity_.x < 0.0f) {
 					// 速度と逆方向に入力時は急ブレーキ
@@ -197,13 +254,13 @@ void Player::MoveInput() {
 					lrDirection_ = LRDirection::kRight;
 
 					// 旋回開始時の角度を記録する
-					turnFirstRotationY_ = std::numbers::pi_v<float> * 3.0f / 2.0f;
+					turnFirstRotationY_ = std::numbers::pi_v<float> *3.0f / 2.0f;
 					// 旋回タイマーに時間を設定する
 					turnTimer_ = kTimeTurn;
 				}
 			} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
 				attackDirection_ = LRDirection::kLeft;
-				
+
 				// 左移動中の右入力
 				if (velocity_.x > 0.0f) {
 					// 速度と逆方向に入力時は急ブレーキ
@@ -286,13 +343,13 @@ void Player::MoveInput() {
 };
 
 // 判定結果を反映して移動させる
-void Player::MoveOnResult(const CollisionMapInfo& info) {
+void Player::MoveOnResult(const CollisionMapInfo &info) {
 	worldTransform_.translation_.x += info.move.x;
 	worldTransform_.translation_.y += info.move.y;
 };
 
 // 天井に接触している場合の処理
-void Player::IsHitCeilingChecker(const CollisionMapInfo& info) {
+void Player::IsHitCeilingChecker(const CollisionMapInfo &info) {
 	// 天井に当たったか？
 	if (info.ceiling) {
 		velocity_.y = 0;
@@ -300,7 +357,7 @@ void Player::IsHitCeilingChecker(const CollisionMapInfo& info) {
 }
 
 // 壁に接触している場合の処理
-void Player::IsHitWallChecker(const CollisionMapInfo& info) {
+void Player::IsHitWallChecker(const CollisionMapInfo &info) {
 	if (info.wall) {
 		velocity_.x *= (1.0f - kAttenuationWall);
 	}
@@ -372,29 +429,63 @@ Vector3 Player::GetWorldPosition() const {
 	return worldPos;
 };
 
-void Player::OnCollision(const Enemy* enemy) {
-	if (isAttack_ || isInvincible_) {
+void Player::OnCollision(const Enemy *enemy) {
+	(void)enemy;
+
+	if (isAttack_ || isInvincible_ ||
+		damageInvincibleTimer_ > 0.0f || isDead_) {
 		return;
 	}
 
-	(void)enemy;
-	// デスフラグを立てる
-	isDead_ = true;
+	RequestState(std::make_unique<KnockBackState>());
+
+	// HPを減らす
+	hp_--;
+
+	// ダメージ演出を開始
+	damageAnimationTimer_ = kDamageAnimationTime;
+
+	// フラグを立ててダメージ後の無敵時間を設定
+	isDamage_ = true;
+	damageInvincibleTimer_ = kDamageInvincibleTime;
+
+	// HPが0以下なら死亡
+	if (hp_ <= 0) {
+		hp_ = 0;
+		isDead_ = true;
+	}
 };
 
-void Player::OnCollision(const ShieldEnemy* shieldEnemy) {
-	if (isAttack_ || isInvincible_) {
+void Player::OnCollision(const ShieldEnemy *shieldEnemy) {
+	(void)shieldEnemy;
+
+	if (isAttack_ || isInvincible_ ||
+		damageInvincibleTimer_ > 0.0f || isDead_) {
 		return;
 	}
 
-	(void)shieldEnemy;
-	// デスフラグを立てる
-	isDead_ = true;
+	RequestState(std::make_unique<KnockBackState>());
+
+	// HPを減らす
+	hp_--;
+
+	// ダメージ演出を開始
+	damageAnimationTimer_ = kDamageAnimationTime;
+
+	// フラグを立ててダメージ後の無敵時間を設定
+	isDamage_ = true;
+	damageInvincibleTimer_ = kDamageInvincibleTime;
+
+	// HPが0以下なら死亡
+	if (hp_ <= 0) {
+		hp_ = 0;
+		isDead_ = true;
+	}
 };
 #pragma endregion
 
 // 画面端と壁に挟まれたかどうかの判定
-void Player::CheckScreenAndWallSandwich(const CollisionMapInfo& info, float minX, float maxX) {
+void Player::CheckScreenAndWallSandwich(const CollisionMapInfo &info, float minX, float maxX) {
 	// プレイヤーが画面左端に接触しているか？
 	bool isAtLeftScreenEdge = (worldTransform_.translation_.x <= minX);
 

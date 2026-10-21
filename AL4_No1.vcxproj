@@ -198,15 +198,16 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClCompile Include="Sources\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="Sources\Object\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="Sources\Object\Enemy\ShieldEnemy.cpp" />
+    <ClCompile Include="Sources\Object\Goal\Goal.cpp" />
     <ClCompile Include="Sources\Object\Player\Player.cpp" />
     <ClCompile Include="Sources\Object\Player\State\AttackState.cpp" />
     <ClCompile Include="Sources\Object\Player\State\KnockBackState.cpp" />
     <ClCompile Include="Sources\Object\Player\State\RootState.cpp" />
     <ClCompile Include="Sources\Object\Skydome\Skydome.cpp" />
+    <ClCompile Include="Sources\Scene\ClearScene.cpp" />
     <ClCompile Include="Sources\Scene\GameScene.cpp" />
-    <ClCompile Include="Sources\Scene\ResultScene.cpp" />
+    <ClCompile Include="Sources\Scene\GameOverScene.cpp" />
     <ClCompile Include="Sources\Scene\TitleScene.cpp" />
-    <ClCompile Include="Sources\TitleLogo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Camera\GameCamera.h" />
@@ -235,17 +236,18 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClInclude Include="Sources\Object\Enemy\Enemy.h" />
     <ClInclude Include="Sources\Object\Enemy\NormalEnemy.h" />
     <ClInclude Include="Sources\Object\Enemy\ShieldEnemy.h" />
+    <ClInclude Include="Sources\Object\Goal\Goal.h" />
     <ClInclude Include="Sources\Object\Player\Player.h" />
     <ClInclude Include="Sources\Object\Player\State\AttackState.h" />
     <ClInclude Include="Sources\Object\Player\State\KnockBackState.h" />
     <ClInclude Include="Sources\Object\Player\State\PlayerState.h" />
     <ClInclude Include="Sources\Object\Player\State\RootState.h" />
     <ClInclude Include="Sources\Object\Skydome\Skydome.h" />
+    <ClInclude Include="Sources\Scene\ClearScene.h" />
     <ClInclude Include="Sources\Scene\GameScene.h" />
-    <ClInclude Include="Sources\Scene\ResultScene.h" />
+    <ClInclude Include="Sources\Scene\GameOverScene.h" />
     <ClInclude Include="Sources\Scene\Scene.h" />
     <ClInclude Include="Sources\Scene\TitleScene.h" />
-    <ClInclude Include="Sources\TitleLogo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -72,6 +72,9 @@ public:
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition() const;
 
+	// ダメ―ジ時のアニメーション
+	void DamageAnimation();
+
 	// 衝突応答
 	void OnCollision(const Enemy* enemy);
 	void OnCollision(const ShieldEnemy* shieldEnemy);
@@ -87,6 +90,12 @@ public:
 
 	// 向き取得
 	LRDirection GetDirection() const { return lrDirection_; }
+
+	// HP取得
+	int GetHP() const { return hp_; }
+
+	// 最大HP取得
+	int GetMaxHP() const { return kMaxHP; }
 
 private:
 	// プレイヤーの指定した角の座標を取得
@@ -210,4 +219,24 @@ private:
 	bool isInvincible_ = false;
 	// ノックバック時の速度
 	KamataEngine::Vector3 knockBackVelocity_ = {};
+
+	/* HP・無敵時間
+	--------------------*/
+	// 最大HP
+	static inline const int kMaxHP = 3;
+	// HP設定
+	int hp_ = kMaxHP;
+	// ダメージ後の無敵時間
+	static inline const float kDamageInvincibleTime = 1.5f;
+	// 無敵タイマー
+	float damageInvincibleTimer_ = 0.0f;
+
+	/* ダメージ演出
+	--------------------*/
+	// ダメージを受けたか
+	bool isDamage_ = false;
+	// ダメージ演出時間
+	static constexpr float kDamageAnimationTime = 0.2f;
+	// ダメージ演出タイマー
+	float damageAnimationTimer_ = 0.0f;
 };

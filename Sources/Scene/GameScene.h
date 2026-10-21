@@ -10,6 +10,7 @@
 #include "Object/Player/Player.h"
 #include "Object/Enemy/Enemy.h"
 #include "Object/Enemy/ShieldEnemy.h"
+#include "Object/Goal/Goal.h"
 #include "Object/Skydome/Skydome.h"
 
 #include "Game/Map/MapChipField.h"
@@ -61,6 +62,8 @@ public:
 		return effectManager_;
 	}
 
+	bool IsCleared() const { return isCleared_; }
+
 private:
 	// ステージマネージャ参照用のポインタ
 	StageManager *stageManager_ = nullptr;
@@ -92,6 +95,10 @@ private:
 	std::list<ShieldEnemy *> shieldEnemies_;
 	KamataEngine::Model *modelShieldEnemy_ = nullptr;
 
+	// ゴール
+	Goal *goal_ = nullptr;
+	KamataEngine::Model *modelGoal_ = nullptr;
+
 	// スカイドーム
 	Skydome *skydome_ = nullptr;
 	KamataEngine::Model *modelSkydome_ = nullptr;
@@ -119,4 +126,7 @@ private:
 
 	// リロード要求フラグ
 	bool reloadRequested_ = false;
+
+	// ゴール到達フラグ
+	bool isCleared_ = false;
 };

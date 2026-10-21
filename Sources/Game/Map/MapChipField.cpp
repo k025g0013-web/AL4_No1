@@ -10,6 +10,7 @@ std::map<char, MapChipType> mapChipTypeTable = {
     {'B', MapChipType::kBlock },
     {'P', MapChipType::kPlayer},
     {'E', MapChipType::kEnemy },
+	{'G', MapChipType::kGoal  },
 };
 }
 
@@ -55,7 +56,7 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 				word = "";
 			}
 
-			// 【修正】word[kChipType] をキーにしてテーブルに含まれるか判定
+			// word[kChipType] をキーにしてテーブルに含まれるか判定
 			if (word.empty() || !mapChipTypeTable.contains(word[kChipType])) {
 				mapChipData_.data[i][j].type = MapChipType::kBlank;
 				mapChipData_.data[i][j].subID = 0;

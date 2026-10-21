@@ -32,7 +32,7 @@ void KnockBackState::Update(Player &player) {
 	CollisionMapInfo info{};
 	info.move = player.knockBackVelocity_;
 
-	player.CollisionMap(info);
+	player.CheckMapCollision(info);
 	player.MoveOnResult(info);
 
 	// 徐々に止まる

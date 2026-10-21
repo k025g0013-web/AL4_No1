@@ -9,6 +9,7 @@ enum class MapChipType {
 	kBlock, // ブロック
 	kPlayer,// プレイヤー
 	kEnemy,	// 敵
+	kGoal,  // ゴール
 };
 
 struct MapChipDataUint {
@@ -27,6 +28,7 @@ std::map<char, MapChipType> mapChipTable = {
     {'B', MapChipType::kBlock },
     {'P', MapChipType::kPlayer},
     {'E', MapChipType::kEnemy },
+	{'G', MapChipType::kGoal  },
 };
 }
 

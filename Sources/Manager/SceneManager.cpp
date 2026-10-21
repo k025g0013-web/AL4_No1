@@ -1,9 +1,9 @@
 #include "SceneManager.h"
 
-#include "Scene.h"
-#include "TitleScene.h"
-#include "GameScene.h"
-#include "ResultScene.h"
+#include "Scene/Scene.h"
+#include "Scene/TitleScene.h"
+#include "Scene/GameScene.h"
+#include "Scene/ResultScene.h"
 
 SceneManager::SceneManager() {}
 

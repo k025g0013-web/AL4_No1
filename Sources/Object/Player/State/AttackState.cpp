@@ -89,7 +89,6 @@ void AttackState::Update(Player &player) {
 
 		// 余韻動作へ移行
 		if (player.attackParameter_ >= player.attackTime_) {
-			player.isAttack_ = false;
 			player.attackPhase_ = Player::AttackPhase::kCoolTime;
 			player.attackParameter_ = 0; // カウンターをリセット
 		}
@@ -123,7 +122,7 @@ void AttackState::Update(Player &player) {
 	// 計算したローカル移動量を設定
 	attackCollisionInfo.move = velocity;
 
-	player.CollisionMap(attackCollisionInfo);
+	player.CheckMapCollision(attackCollisionInfo);
 
 	player.MoveOnResult(attackCollisionInfo);
 

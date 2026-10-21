@@ -13,6 +13,7 @@
 class Enemy;
 class ShieldEnemy;
 class MapChipField;
+class PlayerState;
 
 class Player {
 	friend class RootState;
@@ -42,7 +43,7 @@ public:
 	// 振る舞い切り替え
 	void RequestState(std::unique_ptr<PlayerState> state);
 
-	// 状態の適応
+	// 振る舞いの適応
 	void ApplyRequestedState();
 
 	void MoveInput();                                       // 移動入力
@@ -57,21 +58,16 @@ public:
 	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
 
 	// マップチップの配置データを取得
-	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+	void SetMapChipField(MapChipField* mapChipField) {
+		mapChipField_ = mapChipField;
+		collisionMap_.SetMapChipField(mapChipField);
+	}
 
 	// マップ衝突判定
-	void CollisionMap(CollisionMapInfo& info);
-
-	void CollisionMapTop(CollisionMapInfo& info);
-	void CollisionMapBottom(CollisionMapInfo& info);
-	void CollisionMapRight(CollisionMapInfo& info);
-	void CollisionMapLeft(CollisionMapInfo& info);
+	void CheckMapCollision(CollisionMapInfo &info);
 
 	// 設置状態の切り替え処理
 	void InstallationStateSwitching(CollisionMapInfo& info);
-
-	// 指定した角の座標計算
-	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
 
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition() const;
@@ -93,13 +89,20 @@ public:
 	LRDirection GetDirection() const { return lrDirection_; }
 
 private:
+	// プレイヤーの指定した角の座標を取得
+	KamataEngine::Vector3 CornerPosition(
+		const KamataEngine::Vector3 &center, Corner corner
+	) const;
+
+private:
 	/* 振る舞い
 	--------------------*/
 	// 現在の振る舞い
 	std::unique_ptr<PlayerState> state_;
 	// 次の振る舞いのリクエスト
 	std::unique_ptr<PlayerState> requestedState_;
-
+	// 攻撃フラグ
+	bool isAttack_ = false;
 	// デスフラグ
 	bool isDead_ = false;
 
@@ -115,8 +118,6 @@ private:
 	float attackTime_ = 10.0f;
 	// クールタイム
 	float coolTime_ = 5.0f;
-	// 攻撃状態フラグ
-	bool isAttack_ = false;
 
 	/* ワールド変換
 	--------------------*/
@@ -179,6 +180,8 @@ private:
 
 	/* マップ・地形衝突
 	--------------------*/
+	// マップとの当たり判定
+    CollisionMap collisionMap_;
 	// マップチップによるフィールド
 	MapChipField *mapChipField_ = nullptr;
 	// マップチップとの衝突判定結果に使用する微小な余白
@@ -191,9 +194,9 @@ private:
 	/* キャラクターの当たり判定
 	--------------------*/
 	// キャラクターの幅
-	static inline const float kWidth = 1.9f;
+	static inline const float kWidth = 2.0f;
 	// キャラクターの高さ
-	static inline const float kHeight = 1.9f;
+	static inline const float kHeight = 2.0f;
 
 	/* ノックバック・無敵状態
 	--------------------*/

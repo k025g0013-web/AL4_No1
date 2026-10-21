@@ -7,24 +7,52 @@ using namespace KamataEngine;
 
 
 // マップチップとの当たり判定
+
 void CollisionMap::CheckMap(
-    CollisionMapInfo &info,
-    const Vector3 &position,
-    float width,
-    float height) {
+    CollisionMapInfo &info, const Vector3 &position,
+    float width, float height) {
 
     // マップが設定されていなければ何もしない
     if (!mapChipField_) {
         return;
     }
 
-    const Vector3 move = info.move;
+    // 元の移動量を保存
+    const Vector3 requestedMove = info.move;
 
-    CheckRight(info, position, move, width, height);
-    CheckLeft(info, position, move, width, height);
-    CheckTop(info, position, move, width, height);
-    CheckBottom(info, position, move, width, height);
+    // X方向だけ移動して、左右の壁を判定
+    Vector3 xMove = {
+        requestedMove.x,
+        0.0f,
+        0.0f
+    };
+
+    // X方向の判定ではY方向に移動させない
+    info.move.x = requestedMove.x;
+    info.move.y = 0.0f;
+
+    CheckRight(info, position, xMove, width, height);
+    CheckLeft(info, position, xMove, width, height);
+
+    // X方向の判定結果を反映した仮の座標
+    Vector3 positionAfterX = position;
+    positionAfterX.x += info.move.x;
+
+
+    // Y方向だけ移動して、天井と床を判定
+    Vector3 yMove = {
+        0.0f,
+        requestedMove.y,
+        0.0f
+    };
+
+    // Y方向の判定では、X方向の確定結果を維持する
+    info.move.y = requestedMove.y;
+
+    CheckTop(info, positionAfterX, yMove, width, height);
+    CheckBottom(info, positionAfterX, yMove, width, height);
 }
+
 
 
 // 上方向の当たり判定

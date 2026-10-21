@@ -5,21 +5,45 @@
 
 #include "Math/Easing.h"
 
+#include <numbers>
+
 using namespace KamataEngine;
 
 void AttackState::Initialize(Player &player) {
 	player.attackParameter_ = 0;
 
 	//	攻撃エフェクト用worldTransform初期化
-	player.worldTransformAttack_.translation_ = player.worldTransform_.translation_;
-	player.worldTransformAttack_.rotation_ = player.worldTransform_.rotation_;
+	player.worldTransformAttack_.translation_ =
+		player.worldTransform_.translation_;
+
+	float destinationRotationYTable[] = {
+		std::numbers::pi_v<float> / 2.0f,
+		std::numbers::pi_v<float> *3.0f / 2.0f
+	};
+
+	player.worldTransformAttack_.rotation_.y =
+		destinationRotationYTable[
+			static_cast<uint32_t>(player.attackDirection_)
+		];
+
 	player.worldTransformAttack_.scale_ = { 1.0f, 1.0f, 1.0f };
 }
 
 void AttackState::Update(Player &player) {
-	// 自機とエフェクトのworldTransform同期
-	player.worldTransformAttack_.translation_ = player.worldTransform_.translation_;
-	player.worldTransformAttack_.rotation_ = player.worldTransform_.rotation_;
+	// 攻撃エフェクトの位置をプレイヤーに同期
+	player.worldTransformAttack_.translation_ =
+		player.worldTransform_.translation_;
+
+	// 攻撃方向に合わせてエフェクトの向きを設定
+	float destinationRotationYTable[] = {
+		std::numbers::pi_v<float> / 2.0f,
+		std::numbers::pi_v<float> *3.0f / 2.0f
+	};
+
+	player.worldTransformAttack_.rotation_.y =
+		destinationRotationYTable[
+			static_cast<uint32_t>(player.attackDirection_)
+		];
 
 	// 予備動作
 	player.attackParameter_++;

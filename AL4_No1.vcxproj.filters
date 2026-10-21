@@ -77,6 +77,15 @@
     <ClCompile Include="Sources\Object\Skydome\Skydome.cpp">
       <Filter>Sources\Object\Skydome</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Player\State\RootState.cpp">
+      <Filter>Sources\Object\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Player\State\AttackState.cpp">
+      <Filter>Sources\Object\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Player\State\KnockBackState.cpp">
+      <Filter>Sources\Object\Player\State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -120,6 +129,9 @@
     </Filter>
     <Filter Include="Sources\Object\Skydome">
       <UniqueIdentifier>{b0c77532-400b-423b-a5c4-85bc9a4399ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Object\Player\State">
+      <UniqueIdentifier>{ebccd279-491a-453f-9242-e7481f59737b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +233,18 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\Skydome\Skydome.h">
       <Filter>Sources\Object\Skydome</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Player\State\PlayerState.h">
+      <Filter>Sources\Object\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Player\State\RootState.h">
+      <Filter>Sources\Object\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Player\State\AttackState.h">
+      <Filter>Sources\Object\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Player\State\KnockBackState.h">
+      <Filter>Sources\Object\Player\State</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

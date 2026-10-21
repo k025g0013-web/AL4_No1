@@ -199,6 +199,9 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClCompile Include="Sources\Object\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="Sources\Object\Enemy\ShieldEnemy.cpp" />
     <ClCompile Include="Sources\Object\Player\Player.cpp" />
+    <ClCompile Include="Sources\Object\Player\State\AttackState.cpp" />
+    <ClCompile Include="Sources\Object\Player\State\KnockBackState.cpp" />
+    <ClCompile Include="Sources\Object\Player\State\RootState.cpp" />
     <ClCompile Include="Sources\Object\Skydome\Skydome.cpp" />
     <ClCompile Include="Sources\Scene\GameScene.cpp" />
     <ClCompile Include="Sources\Scene\ResultScene.cpp" />
@@ -233,6 +236,10 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClInclude Include="Sources\Object\Enemy\NormalEnemy.h" />
     <ClInclude Include="Sources\Object\Enemy\ShieldEnemy.h" />
     <ClInclude Include="Sources\Object\Player\Player.h" />
+    <ClInclude Include="Sources\Object\Player\State\AttackState.h" />
+    <ClInclude Include="Sources\Object\Player\State\KnockBackState.h" />
+    <ClInclude Include="Sources\Object\Player\State\PlayerState.h" />
+    <ClInclude Include="Sources\Object\Player\State\RootState.h" />
     <ClInclude Include="Sources\Object\Skydome\Skydome.h" />
     <ClInclude Include="Sources\Scene\GameScene.h" />
     <ClInclude Include="Sources\Scene\ResultScene.h" />

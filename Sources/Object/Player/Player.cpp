@@ -1,14 +1,19 @@
 #define NOMINMAX
 #include "Player.h"
+#include "State/PlayerState.h"
+#include "State/RootState.h"
+
 #include "Math/Easing.h"
+#include "Math/UpdateWorldTransform.h"
+
+#include <utility>
 #include <algorithm>
 #include <cassert>
 #include <numbers>
-#include "Math/UpdateWorldTransform.h"
+#include <memory>
 
 using namespace KamataEngine;
 
-Player::Player() {};
 Player::~Player() {
 	delete model_;
 	delete modelAttack_;
@@ -42,6 +47,10 @@ void Player::Initialize(Model* model, Model* modelAttack, Camera* camera, const 
 	worldTransformAttack_.rotation_.y = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
 
 	turnTimer_ = 0.0f;
+
+	// 初期状態をRootStateに設定する
+	RequestState(std::make_unique<RootState>());
+	ApplyRequestedState();
 };
 
 // 更新処理
@@ -88,37 +97,12 @@ void Player::Update() {
 	IsHitWallChecker(collisionMapInfo);
 	InstallationStateSwitching(collisionMapInfo);
 
-	if (behaviorRequest_ != Behavior::kUnknown) {
-		// 振る舞いを変更
-		behavior_ = behaviorRequest_;
-		// 各振る舞いごとの初期化を実行
-		switch (behavior_) {
-		case Player::Behavior::kRoot:
-			BehaviorRootInitialize();
-			break;
-		case Player::Behavior::kAttack:
-			BehaviorAttackInitialize();
-			break;
-		case Behavior::kKnockBack:
-			BehaviorKnockBackInitialize();
-			isInvincible_ = true;
-			break;
-		}
-		// 振る舞いリクエストをリセット
-		behaviorRequest_ = Behavior::kUnknown;
-	}
+	// 振る舞いの変更
+	ApplyRequestedState();
 
-	// Behaviorの実行
-	switch (behavior_) {
-	case Player::Behavior::kRoot:
-		BehaviorRootUpdate();
-		break;
-	case Player::Behavior::kAttack:
-		BehaviorAttackUpdate();
-		break;
-	case Behavior::kKnockBack:
-		BehaviorKnockBackUpdate();
-		break;
+	// 振る舞い更新
+	if (state_) {
+		state_->Update(*this);
 	}
 
 	// 行列更新
@@ -133,203 +117,24 @@ void Player::Draw() {
 	model_->Draw(worldTransform_, *camera_);
 
 	// 攻撃時にのみエフェクトを描画
-	if (behavior_ == Behavior::kAttack) {
+	if (isAttack_) {
 		modelAttack_->Draw(worldTransformAttack_, *camera_);
 	}
 };
 #pragma endregion
 
-#pragma region 各Behaviorの処理
-void Player::BehaviorRootInitialize() {}
-
-void Player::BehaviorRootUpdate() {
-	// 移動入力
-	MoveInput();
-
-	// 旋回制御
-	if (turnTimer_ > 0.0f) {
-		// 旋回タイマーを1/60秒だけカウントダウンする
-		turnTimer_ -= 1.0f / 60.0f;
-
-		// 左右の自キャラ角度テーブル
-		float destinationRotationYTable[] = {std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
-		// 状態に応じた角度を取得する
-		float destinationRotation = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
-
-		// 自キャラの角度を設定する
-		float t = 1.0f - std::clamp(turnTimer_ / kTimeTurn, 0.0f, 1.0f);
-		worldTransform_.rotation_.y = turnFirstRotationY_ + (destinationRotation - turnFirstRotationY_) * t;
-	}
-
-	if (turnTimer_ <= 0.0f) {
-		if (Input::GetInstance()->TriggerKey(DIK_Z)) {
-			behaviorRequest_ = Behavior::kAttack;
-		}
-	}
+void Player::RequestState(std::unique_ptr<PlayerState> state) {
+	requestedState_ = std::move(state);
 }
 
-void Player::BehaviorAttackInitialize() {
-	attackParameter_ = 0;
+void Player::ApplyRequestedState() {
+	if (!requestedState_) {
+		return;
+	}
 
-	//	攻撃エフェクト用worldTransform初期化
-	worldTransformAttack_.translation_ = worldTransform_.translation_;
-	worldTransformAttack_.rotation_ = worldTransform_.rotation_;
-	worldTransformAttack_.scale_ = {1.0f, 1.0f, 1.0f};
+	state_ = std::move(requestedState_);
+	state_->Initialize(*this);
 }
-
-void Player::BehaviorAttackUpdate() {
-	// 自機とエフェクトのworldTransform同期
-	worldTransformAttack_.translation_ = worldTransform_.translation_;
-	worldTransformAttack_.rotation_ = worldTransform_.rotation_;
-
-	// 予備動作
-	attackParameter_++;
-
-	// 移動速度の計算
-	float currentMoveSpeed = 0.0f;
-	if (attackPhase_ == AttackPhase::kMove) {
-		currentMoveSpeed = 1.0f;
-	}
-
-	// カメラへの影響を防ぐため、メンバ変数の速度はゼロクリア
-	velocity_ = {};
-
-	// 攻撃中の移動量を計算するためのローカル変数
-	Vector3 velocity = {};
-
-	switch (attackPhase_) {
-		// 溜め動作
-	case AttackPhase::kCharge:
-	default: {
-		// 時間
-		float t = static_cast<float>(attackParameter_) / chargeTime_;
-		t = std::clamp(t, 0.0f, 1.0f);
-
-		// 変形
-		worldTransform_.scale_.y = Easing::Interpolate(EasingType::easeInQuad, t, 1.0f, 1.6f);
-		worldTransform_.scale_.z = Easing::Interpolate(EasingType::easeInQuad, t, 1.0f, 0.3f);
-
-		worldTransformAttack_.scale_.y = Easing::Interpolate(EasingType::easeInQuad, t, 0.0f, 0.5f);
-		worldTransformAttack_.scale_.z = Easing::Interpolate(EasingType::easeInQuad, t, 0.0f, 0.5f);
-
-		// 突進動作へ移行
-		if (attackParameter_ >= chargeTime_) {
-			attackPhase_ = AttackPhase::kMove;
-			attackParameter_ = 0; // カウンターをリセット
-		}
-		break;
-	}
-
-		// 突進動作
-	case AttackPhase::kMove: {
-		// 向き
-		if (lrDirection_ == LRDirection::kLeft) {
-			velocity.x = -currentMoveSpeed;
-		} else if (lrDirection_ == LRDirection::kRight) {
-			velocity.x = currentMoveSpeed;
-		}
-
-		// 時間
-		float t = static_cast<float>(attackParameter_) / attackTime_;
-		t = std::clamp(t, 0.0f, 1.0f);
-
-		// 変形
-		worldTransform_.scale_.y = Easing::Interpolate(EasingType::easeInQuad, t, 1.6f, 0.6f);
-		worldTransform_.scale_.z = Easing::Interpolate(EasingType::easeInQuad, t, 0.3f, 1.4f);
-
-		worldTransformAttack_.scale_.x = Easing::Interpolate(EasingType::easeInQuad, t, 0.5f, 4.0f);
-		worldTransformAttack_.scale_.y = Easing::Interpolate(EasingType::easeInQuad, t, 0.5f, 1.0f);
-		worldTransformAttack_.scale_.z = Easing::Interpolate(EasingType::easeInQuad, t, 0.5f, 1.0f);
-
-		float offset = 2.0f;
-		if (lrDirection_ == LRDirection::kRight) {
-			worldTransformAttack_.translation_.x = worldTransform_.translation_.x + offset;
-		} else {
-			worldTransformAttack_.translation_.x = worldTransform_.translation_.x - offset;
-		}
-
-		// 余韻動作へ移行
-		if (attackParameter_ >= attackTime_) {
-			attackPhase_ = AttackPhase::kCoolTime;
-			attackParameter_ = 0; // カウンターをリセット
-		}
-		break;
-	}
-
-	// 余韻動作
-	case AttackPhase::kCoolTime: {
-		// 時間
-		float t = static_cast<float>(attackParameter_) / coolTime_;
-		t = std::clamp(t, 0.0f, 1.0f);
-
-		// 変形
-		worldTransform_.scale_.z = Easing::Interpolate(EasingType::easeInQuad, t, 1.3f, 1.0f);
-		worldTransform_.scale_.y = Easing::Interpolate(EasingType::easeInQuad, t, 0.7f, 1.0f);
-
-		worldTransformAttack_.scale_.y = Easing::Interpolate(EasingType::easeInQuad, t, 1.0f, 0.0f);
-		worldTransformAttack_.scale_.z = Easing::Interpolate(EasingType::easeInQuad, t, 1.0f, 0.0f);
-
-		// 通常状態に戻す
-		if (attackParameter_ >= coolTime_) {
-			attackPhase_ = AttackPhase::kCharge; // 初期化
-			behaviorRequest_ = Behavior::kRoot;  // 通常状態へ
-		}
-		break;
-	}
-	}
-
-	// 攻撃用の衝突判定情報を初期化して用意
-	CollisionMapInfo attackCollisionInfo;
-	attackCollisionInfo.move = velocity; // 計算したローカル移動量を設定
-
-	CollisionMap(attackCollisionInfo);
-
-	MoveOnResult(attackCollisionInfo);
-
-	IsHitWallChecker(attackCollisionInfo);
-	InstallationStateSwitching(attackCollisionInfo);
-}
-
-void Player::BehaviorKnockBackInitialize() {
-	knockBackTimer_ = 0;
-
-	// 攻撃を中断
-	attackPhase_ = AttackPhase::kCharge;
-	attackParameter_ = 0;
-
-	worldTransform_.scale_ = {1.0f, 1.0f, 1.0f};
-	worldTransformAttack_.scale_ = {0.0f, 0.0f, 0.0f};
-
-	if (lrDirection_ == LRDirection::kRight) {
-		knockBackVelocity_.x = -0.8f;
-	} else {
-		knockBackVelocity_.x = 0.8f;
-	}
-
-	knockBackVelocity_.y = 0.0f;
-}
-
-void Player::BehaviorKnockBackUpdate() {
-
-	knockBackTimer_++;
-
-	CollisionMapInfo info;
-	info.move = knockBackVelocity_;
-
-	CollisionMap(info);
-	MoveOnResult(info);
-
-	// 徐々に止まる
-	knockBackVelocity_.x *= 0.8f;
-
-	if (knockBackTimer_ >= kKnockBackTime) {
-		isInvincible_ = false;
-		behaviorRequest_ = Behavior::kRoot;
-	}
-}
-
-void Player::RequestKnockBack() { behaviorRequest_ = Behavior::kKnockBack; }
-#pragma endregion
 
 #pragma region 更新処理全体の流れ
 // 移動入力
@@ -476,7 +281,7 @@ void Player::InstallationStateSwitching(CollisionMapInfo& info) {
 			MapChipType mapChipType;
 
 			// 移動後の4つの角の座標
-			std::array<Vector3, kNumCorner> positionsNew;
+			std::array<Vector3, kNumCorner> positionsNew{};
 
 			for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 				positionsNew[i] =
@@ -548,7 +353,7 @@ void Player::CollisionMapTop(CollisionMapInfo& info) {
 	}
 
 	// 移動後の4つの角の座標
-	std::array<Vector3, kNumCorner> positionsNew;
+	std::array<Vector3, kNumCorner> positionsNew{};
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
@@ -600,7 +405,7 @@ void Player::CollisionMapBottom(CollisionMapInfo& info) {
 	}
 
 	// 移動後の4つの角の座標
-	std::array<Vector3, kNumCorner> positionsNew;
+	std::array<Vector3, kNumCorner> positionsNew{};
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
@@ -658,7 +463,7 @@ void Player::CollisionMapRight(CollisionMapInfo& info) {
 	}
 
 	// 移動後の4つの角の座標
-	std::array<Vector3, kNumCorner> positionsNew;
+	std::array<Vector3, kNumCorner> positionsNew{};
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
@@ -710,7 +515,7 @@ void Player::CollisionMapLeft(CollisionMapInfo& info) {
 	}
 
 	// 移動後の4つの角の座標
-	std::array<Vector3, kNumCorner> positionsNew;
+	std::array<Vector3, kNumCorner> positionsNew{};
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
@@ -758,7 +563,7 @@ void Player::CollisionMapLeft(CollisionMapInfo& info) {
 #pragma region AABBによる当たり判定
 Vector3 Player::GetWorldPosition() const {
 	// ワールド座標を入れる変数
-	Vector3 worldPos;
+	Vector3 worldPos{};
 	// ワールド行列の並行移動成分を取得（ワールド座標）
 	worldPos.x = worldTransform_.matWorld_.m[3][0];
 	worldPos.y = worldTransform_.matWorld_.m[3][1];
@@ -768,7 +573,7 @@ Vector3 Player::GetWorldPosition() const {
 };
 
 void Player::OnCollision(const Enemy* enemy) {
-	if (behavior_ == Behavior::kAttack || behavior_ == Behavior::kKnockBack || isInvincible_) {
+	if (isAttack_ || isInvincible_) {
 		return;
 	}
 
@@ -778,7 +583,7 @@ void Player::OnCollision(const Enemy* enemy) {
 };
 
 void Player::OnCollision(const ShieldEnemy* shieldEnemy) {
-	if (behavior_ == Behavior::kAttack || behavior_ == Behavior::kKnockBack || isInvincible_) {
+	if (isAttack_ || isInvincible_) {
 		return;
 	}
 

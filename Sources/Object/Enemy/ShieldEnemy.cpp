@@ -1,6 +1,7 @@
 #include "ShieldEnemy.h"
 
 #include "Object/Player/Player.h"
+#include "Object/Player/State/KnockBackState.h"
 #include "Scene/GameScene.h"
 
 #include "Math/UpdateWorldTransform.h"
@@ -101,7 +102,7 @@ void ShieldEnemy::OnCollision(Player *player) {
 				gameScene_->GetEffectManager()->Create<GuardEffect>(effectPos);
 			}
 
-			player->RequestKnockBack();
+			player->RequestState(std::make_unique<KnockBackState>());
 
 			behaviorRequest_ = Behavior::kGuard;
 

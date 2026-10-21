@@ -2,6 +2,8 @@
 #include "KamataEngine.h"
 #include <3d\Model.h>
 
+#include "State/PlayerState.h"
+
 #include "Game/Map/MapChipField.h"
 #include "Game/Map/CollisionMap.h"
 
@@ -13,6 +15,9 @@ class ShieldEnemy;
 class MapChipField;
 
 class Player {
+	friend class RootState;
+	friend class AttackState;
+	friend class KnockBackState;
 public:
 	enum class Behavior {
 		kUnknown,
@@ -28,24 +33,17 @@ public:
 	};
 
 public:
-	Player();  // コンストラクタ
 	~Player(); // デストラクタ
 
 	void Initialize(KamataEngine::Model* model, KamataEngine::Model* modelAttack, KamataEngine::Camera* camera, const KamataEngine::Vector3& position); // 初期化
 	void Update();                                                                                                                                      // 更新
 	void Draw();                                                                                                                                        // 描画
 
-	// 通常行動
-	void BehaviorRootInitialize();
-	void BehaviorRootUpdate();
+	// 振る舞い切り替え
+	void RequestState(std::unique_ptr<PlayerState> state);
 
-	// 攻撃行動
-	void BehaviorAttackInitialize();
-	void BehaviorAttackUpdate();
-
-	// ノックバック行動
-	void BehaviorKnockBackInitialize();
-	void BehaviorKnockBackUpdate();
+	// 状態の適応
+	void ApplyRequestedState();
 
 	void MoveInput();                                       // 移動入力
 	void MoveOnResult(const CollisionMapInfo& info);        // 判定結果を反映して移動させる
@@ -82,28 +80,26 @@ public:
 	void OnCollision(const Enemy* enemy);
 	void OnCollision(const ShieldEnemy* shieldEnemy);
 
-	// 【追加】画面端と壁の挟まれ判定
+	// 画面端と壁の挟まれ判定
 	void CheckScreenAndWallSandwich(const CollisionMapInfo& info, float minX, float maxX);
 
 	// デスフラグのgetter
 	bool IsDead() const { return isDead_; };
 
 	// 攻撃状態チェック
-	bool IsAttack() const { return behavior_ == Behavior::kAttack; };
+	bool IsAttack() const { return isAttack_; }
 
 	// 向き取得
 	LRDirection GetDirection() const { return lrDirection_; }
 
-	void RequestKnockBack();
-
-private:
 private:
 	/* 振る舞い
 	--------------------*/
 	// 現在の振る舞い
-	Behavior behavior_ = Behavior::kRoot;
+	std::unique_ptr<PlayerState> state_;
 	// 次の振る舞いのリクエスト
-	Behavior behaviorRequest_ = Behavior::kUnknown;
+	std::unique_ptr<PlayerState> requestedState_;
+
 	// デスフラグ
 	bool isDead_ = false;
 
@@ -119,6 +115,8 @@ private:
 	float attackTime_ = 10.0f;
 	// クールタイム
 	float coolTime_ = 5.0f;
+	// 攻撃状態フラグ
+	bool isAttack_ = false;
 
 	/* ワールド変換
 	--------------------*/

@@ -160,12 +160,14 @@ private:
 	--------------------*/
 	// キャラクターの向き
 	LRDirection lrDirection_ = LRDirection::kRight;
+	// 攻撃する時の向き
+	LRDirection attackDirection_ = LRDirection::kRight;
 	// 旋回開始時の角度
 	float turnFirstRotationY_ = 0.0f;
 	// 旋回タイマー
 	float turnTimer_ = 0.0f;
 	// 旋回時間（秒）
-	static inline const float kTimeTurn = 0.3f;
+	static inline const float kTimeTurn = 0.1f;
 
 	/* ジャンプ・接地
 	--------------------*/

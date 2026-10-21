@@ -31,10 +31,8 @@ void RootState::Update(Player &player) {
 		player.worldTransform_.rotation_.y = player.turnFirstRotationY_ + (destinationRotation - player.turnFirstRotationY_) * t;
 	}
 
-	if (player.turnTimer_ <= 0.0f) {
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-			player.isAttack_ = true;
-			player.RequestState(std::make_unique<AttackState>());
-		}
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		player.isAttack_ = true;
+		player.RequestState(std::make_unique<AttackState>());
 	}
 }

@@ -184,6 +184,8 @@ void Player::MoveInput() {
 			// 左右加速
 			Vector3 acceleration = {};
 			if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+				attackDirection_ = LRDirection::kRight;
+				
 				// 左移動中の右入力
 				if (velocity_.x < 0.0f) {
 					// 速度と逆方向に入力時は急ブレーキ
@@ -200,6 +202,8 @@ void Player::MoveInput() {
 					turnTimer_ = kTimeTurn;
 				}
 			} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+				attackDirection_ = LRDirection::kLeft;
+				
 				// 左移動中の右入力
 				if (velocity_.x > 0.0f) {
 					// 速度と逆方向に入力時は急ブレーキ
@@ -255,6 +259,7 @@ void Player::MoveInput() {
 			LRDirection newDirection = (dir > 0.0f) ? LRDirection::kRight : LRDirection::kLeft;
 			if (lrDirection_ != newDirection) {
 				lrDirection_ = newDirection;
+				attackDirection_ = newDirection;
 				turnFirstRotationY_ = (dir > 0.0f) ? std::numbers::pi_v<float> *3.0f / 2.0f : std::numbers::pi_v<float> / 2.0f;
 				turnTimer_ = kTimeTurn;
 			}

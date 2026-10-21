@@ -3,7 +3,8 @@
 #include "Scene/Scene.h"
 #include "Scene/TitleScene.h"
 #include "Scene/GameScene.h"
-#include "Scene/ResultScene.h"
+#include "Scene/GameOverScene.h"
+#include "Scene/ClearScene.h"
 
 SceneManager::SceneManager() {}
 
@@ -44,48 +45,77 @@ void SceneManager::Draw() {
 }
 
 void SceneManager::ChangeScene() {
+    if (currentScene_ == nullptr) {
+        return;
+    }
 
-	if (currentScene_ == nullptr) {
-		return;
-	}
+    if (!currentScene_->IsFinished()) {
+        return;
+    }
 
-	// シーン終了条件を確認
-	if (!currentScene_->IsFinished()) {
-		return;
-	}
+    // ゲームシーンがクリアされたかを取得する
+    bool isCleared = false;
 
-	// 現在のシーンを削除
-	delete currentScene_;
-	currentScene_ = nullptr;
+    if (scene_ == SceneType::kGame) {
+        GameScene *gameScene = dynamic_cast<GameScene *>(currentScene_);
 
-	// 次のシーンを生成
-	switch (scene_) {
-	case SceneType::kTitle: {
-		scene_ = SceneType::kGame;
+        if (gameScene != nullptr) {
+            isCleared = gameScene->IsCleared();
+        }
+    }
 
-		GameScene *gameScene = new GameScene();
-		gameScene->Initialize(stageManager_);
+    // 現在のシーンを破棄
+    delete currentScene_;
+    currentScene_ = nullptr;
 
-		currentScene_ = gameScene;
-		break;
-	}
-	case SceneType::kGame: {
-		scene_ = SceneType::kResult;
+    // 次のシーンへ遷移
+    switch (scene_) {
+    case SceneType::kTitle: {
+        scene_ = SceneType::kGame;
 
-		ResultScene* resultScene = new ResultScene();
-		resultScene->Initialize();
+        GameScene *gameScene = new GameScene();
+        gameScene->Initialize(stageManager_);
+        currentScene_ = gameScene;
+        break;
+    }
 
-		currentScene_ = resultScene;
-		break;
-	}
-	case SceneType::kResult: {
-		scene_ = SceneType::kTitle;
+    case SceneType::kGame: {
+        if (isCleared) {
+            // クリアしていたらクリア画面へ
+            scene_ = SceneType::kClear;
 
-		TitleScene* titleScene = new TitleScene();
-		titleScene->Initialize(this);
+            ClearScene *clearScene = new ClearScene();
+            clearScene->Initialize();
+            currentScene_ = clearScene;
+        } else {
+            // クリアしていなければゲームオーバー画面へ
+            scene_ = SceneType::kGameOver;
 
-		currentScene_ = titleScene;
-		break;
-	}
-	}
+            GameOverScene *gameOverScene = new GameOverScene();
+            gameOverScene->Initialize();
+            currentScene_ = gameOverScene;
+        }
+        break;
+    }
+
+    case SceneType::kGameOver: {
+        // ゲームオーバー画面からタイトルへ
+        scene_ = SceneType::kTitle;
+
+        TitleScene *titleScene = new TitleScene();
+        titleScene->Initialize(this);
+        currentScene_ = titleScene;
+        break;
+    }
+
+    case SceneType::kClear: {
+        // クリア画面からタイトルへ
+        scene_ = SceneType::kTitle;
+
+        TitleScene *titleScene = new TitleScene();
+        titleScene->Initialize(this);
+        currentScene_ = titleScene;
+        break;
+    }
+    }
 }

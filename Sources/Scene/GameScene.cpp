@@ -61,6 +61,12 @@ void GameScene::Initialize(StageManager *stageManager) {
 	// 引数をメンバポインタに記録する
 	stageManager_ = stageManager;
 
+	// シーンの状態を初期化
+	finished_ = false;
+	isCleared_ = false;
+	phase_ = Phase::kFadeIn;
+
+
 	// カメラマネージャーを生成
 	cameraManager_ = new CameraManager();
 	cameraManager_->Initialize(nullptr);
@@ -408,21 +414,18 @@ void GameScene::CheckAllCollision() {
 		}
 	}
 #pragma endregion
-
 	// プレイヤーとゴールの当たり判定
-	if (player_ && phase_ == Phase::kPlay) {
+	if (player_ && goal_ && phase_ == Phase::kPlay) {
 		const Vector3 playerPosition = player_->GetWorldPosition();
 
-		if (goal_->CheckCollision(
-			playerPosition,
-			2.0f, // Player::kWidth
-			2.0f  // Player::kHeight
-		)) {
-			// ゴールに接触したのでフェードアウト開始
+		if (goal_->CheckCollision(playerPosition, 2.0f, 2.0f)) {
+			// クリアフラグを設定
+			isCleared_ = true;
+
+			// フェードアウト開始
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, duration_);
 		}
-
 	}
 };
 

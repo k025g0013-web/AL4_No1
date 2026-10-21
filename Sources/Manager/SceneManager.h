@@ -9,7 +9,8 @@ public:
 	enum class SceneType {
 		kTitle,
 		kGame,
-		kResult,
+		kGameOver,
+		kClear,
 	};
 
 

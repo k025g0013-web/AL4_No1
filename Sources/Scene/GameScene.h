@@ -62,6 +62,8 @@ public:
 		return effectManager_;
 	}
 
+	bool IsCleared() const { return isCleared_; }
+
 private:
 	// ステージマネージャ参照用のポインタ
 	StageManager *stageManager_ = nullptr;
@@ -124,4 +126,7 @@ private:
 
 	// リロード要求フラグ
 	bool reloadRequested_ = false;
+
+	// ゴール到達フラグ
+	bool isCleared_ = false;
 };

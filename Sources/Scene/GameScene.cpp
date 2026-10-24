@@ -7,6 +7,8 @@
 #include "Object/Enemy/NormalEnemy.h"
 #include "Object/Enemy/ShieldEnemy.h"
 
+#include <algorithm>
+
 using namespace KamataEngine;
 
 // コンストラクタ
@@ -42,6 +44,16 @@ GameScene::~GameScene() {
 	if (deathParticles_ != nullptr) {
 		delete deathParticles_;
 	}
+
+	// 攻撃ダッシュパーティクルを解放
+	for (AttackParticles *particle : attackParticles_) {
+		delete particle;
+	}
+	attackParticles_.clear();
+
+	// 攻撃ダッシュパーティクルのモデルを解放
+	delete modelAttackParticles_;
+	modelAttackParticles_ = nullptr;
 
 	delete mapChipField_;
 
@@ -81,6 +93,7 @@ void GameScene::Initialize(StageManager *stageManager) {
 	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
 	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
 	modelGoal_ = Model::CreateFromOBJ("goal", true);
+	modelAttackParticles_ = Model::CreateFromOBJ("deathParticle", true);
 
 	effectManager_ = new EffectManager();
 	effectManager_->Initialize(
@@ -167,6 +180,60 @@ void GameScene::Update() {
 			Initialize(stageManager_);
 		}
 
+		// 攻撃ダッシュ中にパーティクルを発生させる
+		if (phase_ == Phase::kPlay &&
+			player_ != nullptr &&
+			player_->IsDashEffectActive()) {
+
+			attackParticleEmitTimer_ += 1.0f / 60.0f;
+
+			if (attackParticleEmitTimer_ >= kAttackParticleEmitInterval) {
+				attackParticleEmitTimer_ = 0.0f;
+
+				Vector3 emitPosition = player_->GetWorldPosition();
+
+				// プレイヤーの後方に発生させる
+				if (player_->GetDirection() == LRDirection::kRight) {
+					emitPosition.x -= 0.8f;
+				} else {
+					emitPosition.x += 0.8f;
+				}
+
+				AttackParticles *particle = new AttackParticles();
+
+				particle->Initialize(
+					modelAttackParticles_,
+					&cameraManager_->GetCamera()
+				);
+
+				particle->Emit(emitPosition);
+				attackParticles_.push_back(particle);
+			}
+		} else {
+			attackParticleEmitTimer_ = 0.0f;
+		}
+
+		// パーティクルを更新
+		for (AttackParticles *particle : attackParticles_) {
+			particle->Update();
+		}
+
+		// 終了したパーティクルを削除
+		attackParticles_.erase(
+			std::remove_if(
+				attackParticles_.begin(),
+				attackParticles_.end(),
+				[](AttackParticles *particle) {
+					if (particle->IsFinished()) {
+						delete particle;
+						return true;
+					}
+					return false;
+				}
+			),
+			attackParticles_.end()
+		);
+
 		// キャラクター・エフェクト更新
 		for (Enemy *enemy : enemies_)
 			enemy->Update();
@@ -243,6 +310,11 @@ void GameScene::Draw() {
 	case Phase::kPlay:
 		// プレイヤー
 		player_->Draw();
+
+		// 攻撃ダッシュパーティクル
+		for (AttackParticles *particle : attackParticles_) {
+			particle->Draw();
+		}
 
 		break;
 	case Phase::kFadeOut:

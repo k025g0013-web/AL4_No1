@@ -13,6 +13,8 @@ void KnockBackState::Initialize(Player &player) {
 	// 攻撃を中断
 	player.attackPhase_ = Player::AttackPhase::kCharge;
 	player.attackParameter_ = 0;
+	// ダッシュ演出を終了
+	player.isDashEffectActive_ = false;
 
 	player.worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
 	player.worldTransformAttack_.scale_ = { 0.0f, 0.0f, 0.0f };

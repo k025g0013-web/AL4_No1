@@ -26,7 +26,7 @@ private:
     static constexpr float kDuration = 0.25f;
 
     // 粒子の初期サイズ
-    static constexpr float kInitialScale = 0.12f;
+    static constexpr float kInitialScale = 0.5f;
 
     // 終了時のサイズ倍率
     static constexpr float kMinScaleRate = 0.1f;

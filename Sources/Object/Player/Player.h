@@ -97,6 +97,8 @@ public:
 	// 最大HP取得
 	int GetMaxHP() const { return kMaxHP; }
 
+	bool IsDashEffectActive() const { return isDashEffectActive_; }
+
 private:
 	// プレイヤーの指定した角の座標を取得
 	KamataEngine::Vector3 CornerPosition(
@@ -127,6 +129,8 @@ private:
 	float attackTime_ = 10.0f;
 	// クールタイム
 	float coolTime_ = 5.0f;
+	// 演出中かどうか
+	bool isDashEffectActive_ = false;
 
 	/* ワールド変換
 	--------------------*/

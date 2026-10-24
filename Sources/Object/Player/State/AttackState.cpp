@@ -78,7 +78,10 @@ void AttackState::Update(Player &player) {
 		// 突進動作へ移行
 		if (player.attackParameter_ >= player.chargeTime_) {
 			player.attackPhase_ = Player::AttackPhase::kMove;
-			player.attackParameter_ = 0; // カウンターをリセット
+			player.attackParameter_ = 0;
+
+			// ダッシュ演出を開始
+			player.isDashEffectActive_ = true;
 		}
 		break;
 	}
@@ -114,12 +117,15 @@ void AttackState::Update(Player &player) {
 		// 余韻動作へ移行
 		if (player.attackParameter_ >= player.attackTime_) {
 			player.attackPhase_ = Player::AttackPhase::kCoolTime;
-			player.attackParameter_ = 0; // カウンターをリセット
+			player.attackParameter_ = 0;
+
+			// ダッシュ演出を終了
+			player.isDashEffectActive_ = false;
 		}
 		break;
 	}
 
-								   // 余韻動作
+	// 余韻動作
 	case Player::AttackPhase::kCoolTime: {
 		// 時間
 		float t = static_cast<float>(player.attackParameter_) / player.coolTime_;

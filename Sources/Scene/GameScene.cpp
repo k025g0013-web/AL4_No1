@@ -442,7 +442,8 @@ void GameScene::ChangePhase() {
 			// 自キャラの座標にデスパーティクルを発生、初期化
 			modelDeathParticles_ = Model::CreateFromOBJ("deathParticle", true);
 			deathParticles_ = new DeathParticles;
-			deathParticles_->Initialize(modelDeathParticles_, &cameraManager_->GetCamera(), deathParticlesPosition);
+			deathParticles_->Initialize(modelDeathParticles_, &cameraManager_->GetCamera());
+			deathParticles_->Emit(deathParticlesPosition);
 		}
 		break;
 	case Phase::kDeath:

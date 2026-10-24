@@ -11,9 +11,6 @@
       <Filter>Sources\Scene</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sources\Effect\DeathParticles.cpp">
-      <Filter>Sources\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Effect\Fade.cpp">
       <Filter>Sources\Effect</Filter>
     </ClCompile>
@@ -87,6 +84,15 @@
     <ClCompile Include="Sources\Scene\ClearScene.cpp">
       <Filter>Sources\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Effect\Particle\DeathParticles.cpp">
+      <Filter>Sources\Effect\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\Particle\IParticle.cpp">
+      <Filter>Sources\Effect\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Effect\Particle\AttackParticles.cpp">
+      <Filter>Sources\Effect\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -134,6 +140,9 @@
     <Filter Include="Sources\Object\Player\State">
       <UniqueIdentifier>{ebccd279-491a-453f-9242-e7481f59737b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Effect\Particle">
+      <UniqueIdentifier>{74f4760e-3d1f-4ca5-8754-9680413b4588}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Scene\TitleScene.h">
@@ -147,9 +156,6 @@
     </ClInclude>
     <ClInclude Include="Sources\Scene\Scene.h">
       <Filter>Sources\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Effect\DeathParticles.h">
-      <Filter>Sources\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Effect\Fade.h">
       <Filter>Sources\Effect</Filter>
@@ -247,6 +253,15 @@
     <ClInclude Include="Sources\Object\Goal\Goal.h" />
     <ClInclude Include="Sources\Scene\ClearScene.h">
       <Filter>Sources\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\Particle\DeathParticles.h">
+      <Filter>Sources\Effect\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\Particle\IParticle.h">
+      <Filter>Sources\Effect\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Effect\Particle\AttackParticles.h">
+      <Filter>Sources\Effect\Particle</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

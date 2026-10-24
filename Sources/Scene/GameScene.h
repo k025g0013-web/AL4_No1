@@ -4,8 +4,9 @@
 
 #include "Manager/EffectManager.h"
 
-#include "Effect/DeathParticles.h"
 #include "Effect/Fade.h"
+#include "Effect/Particle/DeathParticles.h"
+#include "Effect/Particle/AttackParticles.h"
 
 #include "Object/Player/Player.h"
 #include "Object/Enemy/Enemy.h"
@@ -129,4 +130,13 @@ private:
 
 	// ゴール到達フラグ
 	bool isCleared_ = false;
+
+	// 攻撃ダッシュ演出
+	std::vector<AttackParticles *> attackParticles_;
+	KamataEngine::Model *modelAttackParticles_ = nullptr;
+
+	// 粒子の発生間隔（秒）
+	float attackParticleEmitTimer_ = 0.0f;
+
+	static constexpr float kAttackParticleEmitInterval = 0.06f;
 };

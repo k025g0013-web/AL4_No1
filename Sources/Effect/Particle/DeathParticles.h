@@ -21,7 +21,7 @@ public:
 
 private:
     // 破片ごとの速度
-    std::array<KamataEngine::Vector3, kNumParticles> velocities_;
+    std::array<KamataEngine::Vector3, kNumParticles> velocities_{};
 
     // 重力加速度（下方向）
     static inline const float kGravity = -0.004f;

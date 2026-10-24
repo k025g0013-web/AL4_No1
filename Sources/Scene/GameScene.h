@@ -111,6 +111,14 @@ private:
 	DeathParticles *deathParticles_ = nullptr;
 	KamataEngine::Model *modelDeathParticles_ = nullptr;
 
+	// 攻撃ダッシュパーティクル
+	std::vector<AttackParticles *> attackParticles_;
+	KamataEngine::Model *modelAttackParticles_ = nullptr;
+
+	// パーティクル生成間隔
+	float attackParticleEmitTimer_ = 0.0f;
+	static constexpr float kAttackParticleEmitInterval = 0.06f;
+
 	// フェード
 	Fade *fade_ = nullptr;
 	float duration_ = 1.0f;
@@ -131,12 +139,4 @@ private:
 	// ゴール到達フラグ
 	bool isCleared_ = false;
 
-	// 攻撃ダッシュ演出
-	std::vector<AttackParticles *> attackParticles_;
-	KamataEngine::Model *modelAttackParticles_ = nullptr;
-
-	// 粒子の発生間隔（秒）
-	float attackParticleEmitTimer_ = 0.0f;
-
-	static constexpr float kAttackParticleEmitInterval = 0.06f;
 };

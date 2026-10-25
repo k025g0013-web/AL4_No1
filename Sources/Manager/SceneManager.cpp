@@ -77,25 +77,59 @@ void SceneManager::Draw() {
     fade_.Draw();
 }
 
-
 void SceneManager::ChangeScene() {
     if (currentScene_ == nullptr) {
         return;
     }
 
-    // ゲームがクリアされたか
+    // ゲームシーンからのポーズメニュー要求を確認
+    if (scene_ == SceneType::kGame) {
+        auto *gameScene = dynamic_cast<GameScene *>(currentScene_);
+
+        if (gameScene != nullptr) {
+            const auto request = gameScene->GetPauseRequest();
+
+            // リセット
+            if (request == GameScene::PauseRequest::Reset) {
+                delete currentScene_;
+                currentScene_ = nullptr;
+
+                auto *newGameScene = new GameScene();
+                newGameScene->Initialize(stageManager_);
+                currentScene_ = newGameScene;
+
+                // シーンの種類はゲームのまま
+                scene_ = SceneType::kGame;
+                return;
+            }
+
+            // タイトルへ戻る
+            if (request == GameScene::PauseRequest::ReturnToTitle) {
+                delete currentScene_;
+                currentScene_ = nullptr;
+
+                auto *titleScene = new TitleScene();
+                titleScene->Initialize(this);
+                currentScene_ = titleScene;
+
+                scene_ = SceneType::kTitle;
+                return;
+            }
+        }
+    }
+
+    // ゲームクリア判定
     bool isCleared = false;
 
     if (scene_ == SceneType::kGame) {
-        auto *gameScene =
-            dynamic_cast<GameScene *>(currentScene_);
+        auto *gameScene = dynamic_cast<GameScene *>(currentScene_);
 
         if (gameScene != nullptr) {
             isCleared = gameScene->IsCleared();
         }
     }
 
-    // ゲームオーバーメニューの選択項目を取得
+    // ゲームオーバーメニューの選択項目
     int gameOverSelection = 1;
 
     if (scene_ == SceneType::kGameOver) {
@@ -103,8 +137,7 @@ void SceneManager::ChangeScene() {
             dynamic_cast<GameOverScene *>(currentScene_);
 
         if (gameOverScene != nullptr) {
-            gameOverSelection =
-                gameOverScene->GetSelectedItem();
+            gameOverSelection = gameOverScene->GetSelectedItem();
         }
     }
 
@@ -142,14 +175,14 @@ void SceneManager::ChangeScene() {
 
     case SceneType::kGameOver: {
         if (gameOverSelection == 0) {
-            // Continue：ゲームを再スタート
+            // ゲームを再スタート
             scene_ = SceneType::kGame;
 
             auto *gameScene = new GameScene();
             gameScene->Initialize(stageManager_);
             currentScene_ = gameScene;
         } else {
-            // Back to Title：タイトルへ戻る
+            // タイトルへ戻る
             scene_ = SceneType::kTitle;
 
             auto *titleScene = new TitleScene();

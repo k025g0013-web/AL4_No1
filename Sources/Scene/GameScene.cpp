@@ -64,6 +64,9 @@ GameScene::~GameScene() {
 	delete modelGuardEffect_;
 
 	delete goal_;
+
+	delete spritePauseOverlay_;
+	spritePauseOverlay_ = nullptr;
 }
 
 #pragma region 初期化・更新・描画
@@ -75,7 +78,6 @@ void GameScene::Initialize(StageManager *stageManager) {
 	finished_ = false;
 	isCleared_ = false;
 	phase_ = Phase::kPlay;
-
 
 	// カメラマネージャーを生成
 	cameraManager_ = new CameraManager();
@@ -117,10 +119,64 @@ void GameScene::Initialize(StageManager *stageManager) {
 	skydome_ = new Skydome;
 	skydome_->Initialize(modelSkydome_, &cameraManager_->GetCamera());
 
+	// ポーズ状態を初期化
+	isPaused_ = false;
+	pauseRequest_ = PauseRequest::None;
+
+	// 暗転用テクスチャを読み込む
+	textureHandlePause_ = TextureManager::Load("white1x1.png");
+
+	// 暗転用スプライトを生成
+	spritePauseOverlay_ = Sprite::Create(
+		textureHandlePause_,
+		{ 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.5f }
+	);
+
+	// 画面全体を覆うサイズにする
+	spritePauseOverlay_->SetSize({ 1280.0f, 720.0f });
+
 	UpdateCameraAndTransforms();
 }
 
 void GameScene::Update() {
+	// ポーズ中
+	if (isPaused_) {
+		poseMenu_.Update();
+
+		if (poseMenu_.IsDecided()) {
+			switch (poseMenu_.GetSelectedItem()) {
+			case 0: // リセット
+				pauseRequest_ = PauseRequest::Reset;
+				finished_ = true;
+				break;
+
+			case 1: // 再開
+				isPaused_ = false;
+				poseMenu_.Initialize();
+				break;
+
+			case 2: // タイトルへ戻る
+				pauseRequest_ = PauseRequest::ReturnToTitle;
+				finished_ = true;
+				break;
+			}
+		}
+
+		return;
+	}
+
+	// 通常プレイ中にPキーでポーズ
+	if (Input::GetInstance()->TriggerKey(DIK_P)) {
+		isPaused_ = true;
+		poseMenu_.Initialize();
+		return;
+	}
+
+	// ポーズ中はゲームの更新を停止する
+	if (isPaused_) {
+		return;
+	}
 
 #ifdef _DEBUG
 	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
@@ -145,22 +201,6 @@ void GameScene::Update() {
 		skydome_->Update();
 		if (!isCleared_) {
 			player_->Update();
-
-			// Rキーでリセット（リロード）
-			if (Input::GetInstance()->TriggerKey(DIK_R)) {
-				// キャラクター等の再配置を含めて再初期化
-				for (Enemy *enemy : enemies_) {
-					delete enemy;
-				}
-				enemies_.clear();
-
-				for (ShieldEnemy *shieldEnemy : shieldEnemies_) {
-					delete shieldEnemy;
-				}
-				shieldEnemies_.clear();
-
-				Initialize(stageManager_);
-			}
 		}
 
 		// ゴール更新
@@ -257,7 +297,7 @@ void GameScene::Update() {
 				finished_ = true;
 			}
 		}
-		
+
 		UpdateCameraAndTransforms();
 		break;
 	}
@@ -334,6 +374,16 @@ void GameScene::Draw() {
 	}
 
 	Model::PostDraw(); // 終了
+
+	// ポーズ中だけ画面を暗くする
+	Sprite::PreDraw();
+
+	if (isPaused_) {
+		spritePauseOverlay_->Draw();
+		poseMenu_.Draw();
+	}
+
+	Sprite::PostDraw();
 }
 #pragma endregion
 

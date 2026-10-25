@@ -191,6 +191,7 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClCompile Include="Sources\Game\Map\CollisionMap.cpp" />
     <ClCompile Include="Sources\Game\Map\MapChipField.cpp" />
     <ClCompile Include="Sources\Game\Menu\GameOverMenu.cpp" />
+    <ClCompile Include="Sources\Game\Menu\PoseMenu.cpp" />
     <ClCompile Include="Sources\Game\Menu\TitleMenu.cpp" />
     <ClCompile Include="Sources\Manager\CameraManager.cpp" />
     <ClCompile Include="Sources\Manager\DebugSettingManager.cpp" />
@@ -227,6 +228,7 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClInclude Include="Sources\Game\Map\MapChipField.h" />
     <ClInclude Include="Sources\Game\Menu\GameOverMenu.h" />
     <ClInclude Include="Sources\Game\Menu\Menu.h" />
+    <ClInclude Include="Sources\Game\Menu\PoseMenu.h" />
     <ClInclude Include="Sources\Game\Menu\TitleMenu.h" />
     <ClInclude Include="Sources\Manager\CameraManager.h" />
     <ClInclude Include="Sources\Manager\DebugSettingManager.h" />

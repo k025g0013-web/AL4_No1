@@ -90,7 +90,7 @@ void GameScene::Initialize(StageManager *stageManager) {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
 	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
-	modelGoal_ = Model::CreateFromOBJ("goal", true);
+	modelGoal_ = Model::CreateFromOBJ("goalPoint", true);
 	modelAttackParticles_ = Model::CreateFromOBJ("deathParticle", true);
 
 	effectManager_ = new EffectManager();
@@ -117,6 +117,7 @@ void GameScene::Initialize(StageManager *stageManager) {
 	skydome_ = new Skydome;
 	skydome_->Initialize(modelSkydome_, &cameraManager_->GetCamera());
 
+	UpdateCameraAndTransforms();
 }
 
 void GameScene::Update() {

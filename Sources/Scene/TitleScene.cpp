@@ -42,8 +42,11 @@ void TitleScene::Initialize(SceneManager *sceneManager) {
 	playerWorldTransform_.rotation_ =		{ 0.0f, 0.0f, 0.0f };
 	playerWorldTransform_.scale_ =			{ 3.0f, 3.0f, 3.0f };
 
-	// タイトルメニュー初期化
+	// メニュー初期化
 	titleMenu_.Initialize();
+
+	// 初回描画前にワールド行列を更新
+	UpdateWorldTransform(playerWorldTransform_);
 }
 
 void TitleScene::Update() {

@@ -2,9 +2,23 @@
 using namespace KamataEngine;
 
 #include "Game/Menu/TitleMenu.h"
+#include "Math/UpdateWorldTransform.h"
+
+TitleScene::~TitleScene() {
+	delete cameraManager_;
+
+	delete skydome_;
+
+	delete modelPlayer_;
+}
 
 void TitleScene::Initialize(SceneManager *sceneManager) {
 	isFinished_ = false;	// 終了フラグ初期化
+
+	// カメラマネージャーを生成
+	cameraManager_ = new CameraManager();
+	cameraManager_->Initialize(nullptr);
+	cameraManager_->Reset();
 
 	// シーンマネージャ取得
 	sceneManager_ = sceneManager;
@@ -13,14 +27,32 @@ void TitleScene::Initialize(SceneManager *sceneManager) {
 	graphHandleTitleLogo_ = TextureManager::Load("titleLogo.png");
 
 	// スプライト生成
-	spriteTitleLogo_ = Sprite::Create(graphHandleTitleLogo_, {100,25}, { 1.0f, 1.0f, 1.0f, 1.0f });
+	spriteTitleLogo_ = Sprite::Create(graphHandleTitleLogo_, { 100,25 }, { 1.0f, 1.0f, 1.0f, 1.0f });
 
+	// モデル読み込み
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
+
+	// モデル生成
+	skydome_ = new Skydome;
+	skydome_->Initialize(modelSkydome_, &cameraManager_->GetCamera());
+
+	playerWorldTransform_.Initialize();
+	playerWorldTransform_.translation_ =	{ 8.0f, 0.0f, -25.0f };
+	playerWorldTransform_.rotation_ =		{ 0.0f, 0.0f, 0.0f };
+	playerWorldTransform_.scale_ =			{ 3.0f, 3.0f, 3.0f };
 
 	// タイトルメニュー初期化
 	titleMenu_.Initialize();
 }
 
 void TitleScene::Update() {
+	// 天球
+	skydome_->Update();
+
+	playerWorldTransform_.rotation_.y += 0.02f;
+	UpdateWorldTransform(playerWorldTransform_);
+
 	// メニュー操作更新
 	titleMenu_.Update();
 
@@ -37,6 +69,18 @@ void TitleScene::Update() {
 }
 
 void TitleScene::Draw() {
+	// モデル描画
+	//=========================
+	Model::PreDraw(); // 開始
+
+	// 天球
+	skydome_->Draw();
+
+	modelPlayer_->Draw(playerWorldTransform_, cameraManager_->GetCamera());
+
+	Model::PostDraw(); // 終了
+
+
 	// スプライト描画
 	//=========================
 	Sprite::PreDraw(); // 開始
@@ -45,12 +89,6 @@ void TitleScene::Draw() {
 	titleMenu_.Draw();
 
 	Sprite::PostDraw(); // 終了
-
-
-	// モデル描画
-	//=========================
-	Model::PreDraw(); // 開始
-	Model::PostDraw(); // 終了
 }
 
 bool TitleScene::IsFinished() const { return isFinished_; }

@@ -4,7 +4,6 @@
 
 #include "Manager/EffectManager.h"
 
-#include "Effect/Fade.h"
 #include "Effect/Particle/DeathParticles.h"
 #include "Effect/Particle/AttackParticles.h"
 
@@ -41,14 +40,12 @@ public:
 
 	// ゲームのフェーズ(型)
 	enum class Phase {
-		kFadeIn,	// フェードイン
 		kPlay,		// ゲームプレイ
 		kDeath,		// デス演出
-		kFadeOut,	// フェードアウト
 	};
 
 	// ゲームの現在フェーズ(変数)
-	Phase phase_ = Phase::kFadeIn;
+	Phase phase_ = Phase::kPlay;
 
 	// フェーズの切り替え
 	void ChangePhase();
@@ -118,10 +115,6 @@ private:
 	// パーティクル生成間隔
 	float attackParticleEmitTimer_ = 0.0f;
 	static constexpr float kAttackParticleEmitInterval = 0.06f;
-
-	// フェード
-	Fade *fade_ = nullptr;
-	float duration_ = 1.0f;
 
 	// エフェクトマネージャ
 	EffectManager *effectManager_ = nullptr;

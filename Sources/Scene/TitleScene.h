@@ -1,15 +1,17 @@
 #pragma once
-
 #include "Scene.h"
-#include "Manager/SceneManager.h"
 
+#include "Manager/SceneManager.h"
+#include "Manager/CameraManager.h"
 #include "Game/Menu/TitleMenu.h"
+#include "Object/Skydome/Skydome.h"
+#include "Object/Player/Player.h"
+
 
 class TitleScene final : public Scene {
 public:
 	TitleScene() = default;
-	~TitleScene() override = default;
-
+	~TitleScene() override;
 
 	/// 初期化
 	void Initialize(SceneManager *sceneManager);
@@ -28,6 +30,9 @@ private:
 	// シーン終了フラグ
 	bool isFinished_ = false;
 
+	// カメラ
+	CameraManager *cameraManager_ = nullptr;
+
 	// テクスチャハンドル
 	uint32_t graphHandleTitleLogo_ = 0;
 
@@ -36,6 +41,14 @@ private:
 
 	// タイトルメニュー
 	TitleMenu titleMenu_;
+
+	// スカイドーム
+	Skydome *skydome_ = nullptr;
+	KamataEngine::Model *modelSkydome_ = nullptr;
+
+	// プレイヤー
+	KamataEngine::Model *modelPlayer_ = nullptr;
+	KamataEngine::WorldTransform playerWorldTransform_;
 
 	// シーンマネージャー
 	SceneManager *sceneManager_ = nullptr;

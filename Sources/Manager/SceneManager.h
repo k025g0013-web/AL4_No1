@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stageManager.h"
+#include "Effect/Fade.h"
 
 class Scene;
 
@@ -13,6 +14,11 @@ public:
 		kClear,
 	};
 
+	enum class TransitionState {
+		None,
+		FadeOut,
+		FadeIn
+	};
 
 	SceneManager();
 	~SceneManager();
@@ -41,4 +47,9 @@ private:
 	SceneType scene_ = SceneType::kTitle;
 
 	StageManager *stageManager_;
+
+	Fade fade_;
+	TransitionState transitionState_ = TransitionState::None;
+
+	float fadeDuration_ = 0.5f;
 };

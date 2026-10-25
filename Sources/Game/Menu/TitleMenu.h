@@ -43,6 +43,7 @@ private:
 	KamataEngine::Vector4 startColor;
 	KamataEngine::Vector4 exitColor;
 
+
 	// 移動元の座標
 	KamataEngine::Vector2 startPositionStart_;
 	KamataEngine::Vector2 startPositionExit_;
@@ -51,7 +52,20 @@ private:
 	KamataEngine::Vector2 targetPositionStart_;
 	KamataEngine::Vector2 targetPositionExit_;
 
+	// 揺れを適用する前の座標
+	KamataEngine::Vector2 basePositionStart_;
+	KamataEngine::Vector2 basePositionExit_;
+
 	// イージング用
 	float moveTimer_ = 0.0f;
 	float moveDuration_ = 0.2f;
+
+	// Sine波による揺れ
+	float sineTimer_ = 0.0f;
+
+	// 揺れの速さ
+	float sineSpeed_ = 4.0f;
+
+	// 揺れの幅
+	float sineAmplitude_ = 5.0f;
 };

@@ -67,6 +67,9 @@ GameScene::~GameScene() {
 
 	delete spritePauseOverlay_;
 	spritePauseOverlay_ = nullptr;
+
+	delete hpIcon_;
+	hpIcon_ = nullptr;
 }
 
 #pragma region 初期化・更新・描画
@@ -110,6 +113,16 @@ void GameScene::Initialize(StageManager *stageManager) {
 
 	// CSVの配置を読み込んでブロック、プレイヤー、エネミーを生成・配置
 	GenerateBlocks();
+
+	// HPアイコンの初期化
+	hpIcon_ = new HpIcon();
+	hpIcon_->Initialize(player_);
+
+	// テクスチャ読み込み
+	graphHandleOperationGuide_ = TextureManager::Load("operationGuide.png");
+
+	// スプライト生成
+	spriteOperationGuide_ = Sprite::Create(graphHandleOperationGuide_, {});
 
 	// プレイヤー生成後に追従対象を設定
 	cameraManager_->SetTarget(player_);
@@ -269,6 +282,10 @@ void GameScene::Update() {
 
 		effectManager_->Update();
 
+		if (hpIcon_ != nullptr) {
+			hpIcon_->Update();
+		}
+
 		// カメラ・行列更新
 		UpdateCameraAndTransforms();
 
@@ -377,6 +394,14 @@ void GameScene::Draw() {
 
 	// ポーズ中だけ画面を暗くする
 	Sprite::PreDraw();
+
+	if (phase_ == Phase::kPlay) {
+		if (hpIcon_ != nullptr) {
+			hpIcon_->Draw();
+		}
+	}
+	
+	spriteOperationGuide_->Draw();
 
 	if (isPaused_) {
 		spritePauseOverlay_->Draw();

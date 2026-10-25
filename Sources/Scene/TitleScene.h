@@ -33,12 +33,10 @@ private:
 	// カメラ
 	CameraManager *cameraManager_ = nullptr;
 
-	// テクスチャハンドル
+	// タイトルロゴ
 	uint32_t graphHandleTitleLogo_ = 0;
-
-	// スプライト
 	KamataEngine::Sprite *spriteTitleLogo_ = nullptr;
-
+	 
 	// タイトルメニュー
 	TitleMenu titleMenu_;
 

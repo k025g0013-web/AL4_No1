@@ -14,6 +14,7 @@
 #include "Object/Skydome/Skydome.h"
 
 #include "Game/Map/MapChipField.h"
+#include "Game/Menu/PoseMenu.h"
 #include "Manager/CameraManager.h"
 
 #include <vector>
@@ -21,6 +22,13 @@
 class StageManager;
 
 class GameScene final : public Scene {
+public:
+	enum class PauseRequest {
+		None,
+		Reset,
+		ReturnToTitle
+	};
+
 public:
 	GameScene();  // コンストラクタ
 	~GameScene() override; // デストラクタ
@@ -61,6 +69,10 @@ public:
 	}
 
 	bool IsCleared() const { return isCleared_; }
+
+	PauseRequest GetPauseRequest() const {
+		return pauseRequest_;
+	}
 
 private:
 	// ステージマネージャ参照用のポインタ
@@ -132,4 +144,14 @@ private:
 	// ゴール到達フラグ
 	bool isCleared_ = false;
 
+	// ポーズ画面の暗転オーバーレイ
+	uint32_t textureHandlePause_ = 0;
+	KamataEngine::Sprite *spritePauseOverlay_ = nullptr;
+
+	// ポーズメニュー
+	PoseMenu poseMenu_;
+	bool isPaused_ = false;
+
+	// ポーズメニューからの要求
+	PauseRequest pauseRequest_ = PauseRequest::None;
 };

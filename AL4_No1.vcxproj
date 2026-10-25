@@ -201,6 +201,7 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClCompile Include="Sources\Manager\StageManager.cpp" />
     <ClCompile Include="Sources\Math\Easing.cpp" />
     <ClCompile Include="Sources\Object\Enemy\Enemy.cpp" />
+    <ClCompile Include="Sources\Object\Enemy\JumpEnemy.cpp" />
     <ClCompile Include="Sources\Object\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="Sources\Object\Enemy\ShieldEnemy.cpp" />
     <ClCompile Include="Sources\Object\Goal\Goal.cpp" />
@@ -244,6 +245,7 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClInclude Include="Sources\Math\UpdateWorldTransform.h" />
     <ClInclude Include="Sources\Object\Common\LRDirection.h" />
     <ClInclude Include="Sources\Object\Enemy\Enemy.h" />
+    <ClInclude Include="Sources\Object\Enemy\JumpEnemy.h" />
     <ClInclude Include="Sources\Object\Enemy\NormalEnemy.h" />
     <ClInclude Include="Sources\Object\Enemy\ShieldEnemy.h" />
     <ClInclude Include="Sources\Object\Goal\Goal.h" />

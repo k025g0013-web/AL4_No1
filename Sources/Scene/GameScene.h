@@ -10,6 +10,7 @@
 #include "Object/Player/Player.h"
 #include "Object/Enemy/Enemy.h"
 #include "Object/Enemy/ShieldEnemy.h"
+#include "Object/Enemy/JumpEnemy.h"
 #include "Object/Goal/Goal.h"
 #include "Object/Skydome/Skydome.h"
 
@@ -105,6 +106,10 @@ private:
 	// 盾エネミー
 	std::list<ShieldEnemy *> shieldEnemies_;
 	KamataEngine::Model *modelShieldEnemy_ = nullptr;
+
+	// ジャンプエネミー
+	std::list<JumpEnemy *> jumpEnemies_;
+	KamataEngine::Model *modelJumpEnemy_ = nullptr;
 
 	// ゴール
 	Goal *goal_ = nullptr;

@@ -6,6 +6,7 @@
 
 #include "Object/Enemy/NormalEnemy.h"
 #include "Object/Enemy/ShieldEnemy.h"
+#include "Object/Enemy/JumpEnemy.h"
 
 #include <algorithm>
 
@@ -36,6 +37,11 @@ GameScene::~GameScene() {
 
 	for (ShieldEnemy *shieldEnemy : shieldEnemies_) {
 		delete shieldEnemy;
+	}
+	shieldEnemies_.clear();
+
+	for (JumpEnemy *jumpEnemy : jumpEnemies_) {
+		delete jumpEnemy;
 	}
 	shieldEnemies_.clear();
 
@@ -92,6 +98,7 @@ void GameScene::Initialize(StageManager *stageManager) {
 	modelPlayerAttack_ = Model::CreateFromOBJ("attack", true);
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
 	modelShieldEnemy_ = Model::CreateFromOBJ("shieldEnemy", true);
+	modelJumpEnemy_ = Model::CreateFromOBJ("enemy", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
 	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
@@ -279,6 +286,8 @@ void GameScene::Update() {
 			enemy->Update();
 		for (ShieldEnemy *shieldEnemy : shieldEnemies_)
 			shieldEnemy->Update();
+		for (JumpEnemy *jumpEnemy : jumpEnemies_)
+			jumpEnemy->Update();
 
 		effectManager_->Update();
 
@@ -373,6 +382,12 @@ void GameScene::Draw() {
 		shieldEnemy->SetMapChipField(mapChipField_);
 	}
 
+	// ジャンプエネミー
+	for (JumpEnemy *jumpEnemy : jumpEnemies_) {
+		jumpEnemy->Draw();
+		jumpEnemy->SetMapChipField(mapChipField_);
+	}
+
 	// ゴール
 	goal_->Draw();
 
@@ -463,6 +478,12 @@ void GameScene::GenerateBlocks() {
 					shieldEnemies_.push_back(newShieldEnemy);
 					break;
 				}
+				case 2: {
+					JumpEnemy *newJumpEnemy = new JumpEnemy();
+					newJumpEnemy->Initialize(modelJumpEnemy_, &cameraManager_->GetCamera(), position);
+					newJumpEnemy->SetGameScene(this);
+					jumpEnemies_.push_back(std::move(newJumpEnemy));
+				}
 				}
 				break;
 			}
@@ -533,6 +554,26 @@ void GameScene::CheckAllCollision() {
 			player_->OnCollision(shieldEnemy);
 			// 敵の衝突時関数を呼び出す
 			shieldEnemy->OnCollision(player_);
+		}
+	}
+
+	// 自キャラと敵弾全ての当たり判定
+	for (JumpEnemy *jumpEnemy : jumpEnemies_) {
+		if (jumpEnemy->GetIsCollisionDisabled()) {
+			continue;
+		}
+
+		// 敵弾の座標
+		aabb2 = GetAABB(jumpEnemy->GetWorldTransform());
+
+		// AABB同士の交差判定
+		if ((aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
+			(aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
+			(aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z)) {
+			// 自キャラの衝突時関数を呼び出す
+			player_->OnCollision(jumpEnemy);
+			// 敵の衝突時関数を呼び出す
+			jumpEnemy->OnCollision(player_);
 		}
 	}
 #pragma endregion

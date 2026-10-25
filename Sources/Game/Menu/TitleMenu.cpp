@@ -3,21 +3,29 @@ using namespace KamataEngine;
 
 #include "Math/Easing.h"
 
+#include <cmath>
+
 void TitleMenu::Initialize() {
     // テクスチャ読み込み
     graphHandleStartText_ = TextureManager::Load("startText.png");
     graphHandleExitText_ = TextureManager::Load("exitText.png");
 
     // 初期座標
-    startPositionStart_ = { 130.0f, 200.0f };
-    startPositionExit_ = { 100.0f, 300.0f };
+    startPositionStart_ = { 180.0f, 400.0f };
+    startPositionExit_ = { 150.0f, 500.0f };
 
     targetPositionStart_ = startPositionStart_;
     targetPositionExit_ = startPositionExit_;
 
+	basePositionStart_ = startPositionStart_;
+	basePositionExit_ = startPositionExit_;
+
     // スプライト生成
     spriteStartText_ = Sprite::Create(graphHandleStartText_, startPositionStart_);
     spriteExitText_ = Sprite::Create(graphHandleExitText_, startPositionExit_);
+
+	spriteStartText_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	spriteExitText_->SetColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 }
 
 void TitleMenu::Update() {
@@ -30,13 +38,13 @@ void TitleMenu::Update() {
 	if (input->TriggerKey(DIK_SPACE)) isDecided_ = true;
 
 	// 上
-	if (input->TriggerKey(DIK_UP)) {
+	if (input->TriggerKey(DIK_UP) || input->TriggerKey(DIK_W)) {
 		selectedItem_--;
 		if (selectedItem_ < 0) selectedItem_ = 1;
 	}
 
 	// 下
-	if (input->TriggerKey(DIK_DOWN)) {
+	if (input->TriggerKey(DIK_DOWN) || input->TriggerKey(DIK_S)) {
 		selectedItem_++;
 		if (selectedItem_ > 1) selectedItem_ = 0;
 	}
@@ -44,44 +52,70 @@ void TitleMenu::Update() {
 
 	// 選択項目が変わった
 	if (previousItem != selectedItem_) {
-		// 現在位置を移動開始位置にする
-		startPositionStart_ = spriteStartText_->GetPosition();
-		startPositionExit_ = spriteExitText_->GetPosition();
+		// 揺れを適用する前の座標を移動開始位置にする
+		startPositionStart_ = basePositionStart_;
+		startPositionExit_ = basePositionExit_;
 
-		// タイマーをリセット
 		moveTimer_ = 0.0f;
 
-		// 移動先を設定
 		if (selectedItem_ == 0) {
-			targetPositionStart_ = { 130.0f, 200.0f };
-			targetPositionExit_ = { 100.0f, 300.0f };
+			targetPositionStart_ = { 180.0f, 400.0f };
+			targetPositionExit_ = { 150.0f, 500.0f };
+
+			spriteStartText_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+			spriteExitText_->SetColor({ 0.5f, 0.5f, 0.5f, 1.0f });
 		} else {
-			targetPositionStart_ = { 100.0f, 200.0f };
-			targetPositionExit_ = { 130.0f, 300.0f };
+			targetPositionStart_ = { 150.0f, 400.0f };
+			targetPositionExit_ = { 180.0f, 500.0f };
+
+			spriteStartText_->SetColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+			spriteExitText_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		}
 	}
-
 
 	// イージング
 	if (moveTimer_ < moveDuration_) {
 		moveTimer_ += 1.0f / 60.0f;
+
 		float t = moveTimer_ / moveDuration_;
-		if (t > 1.0f) t = 1.0f;
-		
-		spriteStartText_->SetPosition(
-			Easing::Interpolate(
-				EasingType::easeOutQuad, t,
-				startPositionStart_, targetPositionStart_)
+		if (t > 1.0f) {
+			t = 1.0f;
+		}
+
+		basePositionStart_ = Easing::Interpolate(
+			EasingType::easeOutQuad,
+			t,
+			startPositionStart_,
+			targetPositionStart_
 		);
 
-		spriteExitText_->SetPosition(
-			Easing::Interpolate(
-				EasingType::easeOutQuad, t,
-				startPositionExit_, targetPositionExit_)
+		basePositionExit_ = Easing::Interpolate(
+			EasingType::easeOutQuad,
+			t,
+			startPositionExit_,
+			targetPositionExit_
 		);
 	}
 
+	// Sine波による上下の揺れ
+	sineTimer_ += 1.0f / 60.0f;
 
+	float sineOffsetStart =
+		std::sin(sineTimer_ * sineSpeed_) * sineAmplitude_;
+
+	float sineOffsetExit =
+		std::sin(sineTimer_ * sineSpeed_ + 1.0f) * sineAmplitude_;
+
+	// 基準座標に揺れを加えてスプライトに反映
+	spriteStartText_->SetPosition({
+		basePositionStart_.x,
+		basePositionStart_.y + sineOffsetStart
+		});
+
+	spriteExitText_->SetPosition({
+		basePositionExit_.x,
+		basePositionExit_.y + sineOffsetExit
+		});
 }
 
 void TitleMenu::Draw() {

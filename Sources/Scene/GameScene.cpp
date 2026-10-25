@@ -57,8 +57,6 @@ GameScene::~GameScene() {
 
 	delete mapChipField_;
 
-	delete fade_;
-
 	delete effectManager_;
 	effectManager_ = nullptr;
 
@@ -76,7 +74,7 @@ void GameScene::Initialize(StageManager *stageManager) {
 	// シーンの状態を初期化
 	finished_ = false;
 	isCleared_ = false;
-	phase_ = Phase::kFadeIn;
+	phase_ = Phase::kPlay;
 
 
 	// カメラマネージャーを生成
@@ -119,10 +117,6 @@ void GameScene::Initialize(StageManager *stageManager) {
 	skydome_ = new Skydome;
 	skydome_->Initialize(modelSkydome_, &cameraManager_->GetCamera());
 
-	// フェード
-	fade_ = new Fade;
-	fade_->Initialize();
-	fade_->Start(Fade::Status::FadeIn, duration_);
 }
 
 void GameScene::Update() {
@@ -144,41 +138,33 @@ void GameScene::Update() {
 	ImGui::End();
 #endif
 
-	// フェードの更新
-	fade_->Update();
-
 	switch (phase_) {
-	case Phase::kFadeIn:
-		if (fade_->IsFinished()) {
-			phase_ = Phase::kPlay;
-		}
-		// intentional fall-through (kFadeInの時もPlayと同じ更新処理に流す)
-		[[fallthrough]];
-
 	case Phase::kPlay:
 		// スカイドーム・プレイヤー
 		skydome_->Update();
-		player_->Update();
+		if (!isCleared_) {
+			player_->Update();
+
+			// Rキーでリセット（リロード）
+			if (Input::GetInstance()->TriggerKey(DIK_R)) {
+				// キャラクター等の再配置を含めて再初期化
+				for (Enemy *enemy : enemies_) {
+					delete enemy;
+				}
+				enemies_.clear();
+
+				for (ShieldEnemy *shieldEnemy : shieldEnemies_) {
+					delete shieldEnemy;
+				}
+				shieldEnemies_.clear();
+
+				Initialize(stageManager_);
+			}
+		}
 
 		// ゴール更新
 		goal_->Update();
 
-
-		// Rキーでリセット（リロード）
-		if (Input::GetInstance()->TriggerKey(DIK_R)) {
-			// キャラクター等の再配置を含めて再初期化
-			for (Enemy *enemy : enemies_) {
-				delete enemy;
-			}
-			enemies_.clear();
-
-			for (ShieldEnemy *shieldEnemy : shieldEnemies_) {
-				delete shieldEnemy;
-			}
-			shieldEnemies_.clear();
-
-			Initialize(stageManager_);
-		}
 
 		// 攻撃ダッシュ中にパーティクルを発生させる
 		if (phase_ == Phase::kPlay &&
@@ -263,22 +249,15 @@ void GameScene::Update() {
 
 		effectManager_->Update();
 
-		if (deathParticles_ != nullptr)
+		if (deathParticles_ != nullptr) {
 			deathParticles_->Update();
 
+			if (deathParticles_->IsFinished()) {
+				finished_ = true;
+			}
+		}
+		
 		UpdateCameraAndTransforms();
-
-		if (deathParticles_->IsFinished()) {
-			phase_ = Phase::kFadeOut;
-			fade_->Start(Fade::Status::FadeOut, duration_);
-		}
-		break;
-
-	case Phase::kFadeOut:
-		if (fade_->IsFinished()) {
-			finished_ = true;
-		}
-		// 必要なオブジェクトの背景更新のみ記述（省略）
 		break;
 	}
 
@@ -306,7 +285,6 @@ void GameScene::Draw() {
 	skydome_->Draw();
 
 	switch (phase_) {
-	case Phase::kFadeIn:
 	case Phase::kPlay:
 		// プレイヤー
 		player_->Draw();
@@ -317,7 +295,6 @@ void GameScene::Draw() {
 		}
 
 		break;
-	case Phase::kFadeOut:
 	case Phase::kDeath:
 		// 死亡時パーティクル
 		if (deathParticles_ != nullptr) {
@@ -354,9 +331,6 @@ void GameScene::Draw() {
 			modelBlock_->Draw(*worldTransformBlock, cameraManager_->GetCamera());
 		}
 	}
-
-	// フェード
-	fade_->Draw();
 
 	Model::PostDraw(); // 終了
 }
@@ -493,10 +467,7 @@ void GameScene::CheckAllCollision() {
 		if (goal_->CheckCollision(playerPosition, 2.0f, 2.0f)) {
 			// クリアフラグを設定
 			isCleared_ = true;
-
-			// フェードアウト開始
-			phase_ = Phase::kFadeOut;
-			fade_->Start(Fade::Status::FadeOut, duration_);
+			finished_ = true;
 		}
 	}
 };

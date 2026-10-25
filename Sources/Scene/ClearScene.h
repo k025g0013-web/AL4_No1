@@ -17,9 +17,5 @@ public:
     }
 
 private:
-    Fade *fade_ = nullptr;
-
-    float duration_ = 1.0f;
     bool finished_ = false;
-    bool isFadeOutStarted_ = false;
 };

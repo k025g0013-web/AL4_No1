@@ -24,24 +24,57 @@ void SceneManager::Initialize(StageManager* stageManager) {
 	currentScene_ = titleScene;
 
 	stageManager_ = stageManager;
+
+    fade_.Initialize();
+    fade_.Start(Fade::Status::FadeIn, fadeDuration_);
+    transitionState_ = TransitionState::FadeIn;
 }
 
 void SceneManager::Update() {
+    if (currentScene_ == nullptr) {
+        return;
+    }
 
-	// シーンの切り替えを確認
-	ChangeScene();
+    // シーン更新
+    currentScene_->Update();
 
-	// 現在のシーンを更新
-	if (currentScene_) {
-		currentScene_->Update();
-	}
+    // フェード更新
+    fade_.Update();
+
+    switch (transitionState_) {
+    case TransitionState::None:
+        // シーン終了を検知したらフェードアウト開始
+        if (currentScene_->IsFinished()) {
+            fade_.Start(Fade::Status::FadeOut, fadeDuration_);
+            transitionState_ = TransitionState::FadeOut;
+        }
+        break;
+
+    case TransitionState::FadeOut:
+        // フェードアウト完了後にシーンを切り替える
+        if (fade_.IsFinished()) {
+            ChangeScene();
+
+            // 新しいシーンを黒い画面から表示する
+            fade_.Start(Fade::Status::FadeIn, fadeDuration_);
+            transitionState_ = TransitionState::FadeIn;
+        }
+        break;
+
+    case TransitionState::FadeIn:
+        // フェードイン完了
+        if (fade_.IsFinished()) {
+            transitionState_ = TransitionState::None;
+        }
+        break;
+    }
 }
 
 void SceneManager::Draw() {
-
-	if (currentScene_) {
-		currentScene_->Draw();
-	}
+    if (currentScene_) {
+        currentScene_->Draw();
+    }
+    fade_.Draw();
 }
 
 void SceneManager::ChangeScene() {
@@ -49,15 +82,12 @@ void SceneManager::ChangeScene() {
         return;
     }
 
-    if (!currentScene_->IsFinished()) {
-        return;
-    }
-
-    // ゲームシーンがクリアされたかを取得する
+    // ゲームシーンがクリアされたかを取得
     bool isCleared = false;
 
     if (scene_ == SceneType::kGame) {
-        GameScene *gameScene = dynamic_cast<GameScene *>(currentScene_);
+        GameScene *gameScene =
+            dynamic_cast<GameScene *>(currentScene_);
 
         if (gameScene != nullptr) {
             isCleared = gameScene->IsCleared();
@@ -68,7 +98,7 @@ void SceneManager::ChangeScene() {
     delete currentScene_;
     currentScene_ = nullptr;
 
-    // 次のシーンへ遷移
+    // 次のシーンを生成
     switch (scene_) {
     case SceneType::kTitle: {
         scene_ = SceneType::kGame;
@@ -81,14 +111,12 @@ void SceneManager::ChangeScene() {
 
     case SceneType::kGame: {
         if (isCleared) {
-            // クリアしていたらクリア画面へ
             scene_ = SceneType::kClear;
 
             ClearScene *clearScene = new ClearScene();
             clearScene->Initialize();
             currentScene_ = clearScene;
         } else {
-            // クリアしていなければゲームオーバー画面へ
             scene_ = SceneType::kGameOver;
 
             GameOverScene *gameOverScene = new GameOverScene();
@@ -98,18 +126,8 @@ void SceneManager::ChangeScene() {
         break;
     }
 
-    case SceneType::kGameOver: {
-        // ゲームオーバー画面からタイトルへ
-        scene_ = SceneType::kTitle;
-
-        TitleScene *titleScene = new TitleScene();
-        titleScene->Initialize(this);
-        currentScene_ = titleScene;
-        break;
-    }
-
+    case SceneType::kGameOver:
     case SceneType::kClear: {
-        // クリア画面からタイトルへ
         scene_ = SceneType::kTitle;
 
         TitleScene *titleScene = new TitleScene();

@@ -236,11 +236,12 @@ void Player::DamageAnimation() {
 void Player::MoveInput() {
 	// 接地状態
 	if (onGround_) {
-		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
+		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT) ||
+			Input::GetInstance()->PushKey(DIK_D) || Input::GetInstance()->PushKey(DIK_A)) {
 
 			// 左右加速
 			Vector3 acceleration = {};
-			if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+			if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_D)) {
 				attackDirection_ = LRDirection::kRight;
 
 				// 左移動中の右入力
@@ -258,7 +259,7 @@ void Player::MoveInput() {
 					// 旋回タイマーに時間を設定する
 					turnTimer_ = kTimeTurn;
 				}
-			} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+			} else if (Input::GetInstance()->PushKey(DIK_LEFT) || Input::GetInstance()->PushKey(DIK_A)) {
 				attackDirection_ = LRDirection::kLeft;
 
 				// 左移動中の右入力
@@ -291,7 +292,8 @@ void Player::MoveInput() {
 				velocity_.x = 0.0f;
 			}
 		}
-		if (Input::GetInstance()->TriggerKey(DIK_UP)) {
+		if (Input::GetInstance()->TriggerKey(DIK_UP) ||
+			Input::GetInstance()->TriggerKey(DIK_W)) {
 			// ジャンプ初速
 			velocity_.y += kJumpAcceleration;
 		}
@@ -303,8 +305,18 @@ void Player::MoveInput() {
 		}
 	} else {
 		// 空中での左右移動
-		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
-			float dir = Input::GetInstance()->PushKey(DIK_RIGHT) ? 1.0f : -1.0f;
+		// 右・左入力
+		bool isRightPressed =
+			Input::GetInstance()->PushKey(DIK_RIGHT) ||
+			Input::GetInstance()->PushKey(DIK_D);
+
+		bool isLeftPressed =
+			Input::GetInstance()->PushKey(DIK_LEFT) ||
+			Input::GetInstance()->PushKey(DIK_A);
+
+		if (isRightPressed || isLeftPressed) {
+			// 移動方向を決定
+			float dir = isRightPressed ? 1.0f : -1.0f;
 
 			// 速度と逆方向に入力時はブレーキ
 			if (velocity_.x * dir < 0.0f) {
@@ -331,7 +343,11 @@ void Player::MoveInput() {
 		}
 
 		// 可変ジャンプ: 上昇中にボタンを離したら上昇を弱める
-		if (!Input::GetInstance()->PushKey(DIK_UP) && velocity_.y > 0.0f) {
+		bool isJumpKeyPressed =
+			Input::GetInstance()->PushKey(DIK_UP) ||
+			Input::GetInstance()->PushKey(DIK_W);
+
+		if (!isJumpKeyPressed && velocity_.y > 0.0f) {
 			velocity_.y *= kJumpCutRate;
 		}
 

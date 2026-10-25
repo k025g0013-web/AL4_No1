@@ -47,9 +47,6 @@
     <ClCompile Include="Sources\Manager\EffectManager.cpp">
       <Filter>Sources\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Menu\TitleMenu.cpp">
-      <Filter>Sources\Game\Menu</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Game\Map\CollisionMap.cpp">
       <Filter>Sources\Game\Map</Filter>
     </ClCompile>
@@ -93,6 +90,18 @@
     <ClCompile Include="Sources\Effect\Particle\AttackParticles.cpp">
       <Filter>Sources\Effect\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Game\UI\Menu\GameOverMenu.cpp">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\Menu\PoseMenu.cpp">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\Menu\TitleMenu.cpp">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\HPIcon\HPIcon.cpp">
+      <Filter>Sources\Game\UI\HPIcon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -122,9 +131,6 @@
     <Filter Include="Sources\Game">
       <UniqueIdentifier>{c40f7f1f-70c8-4b8f-a90b-fa32f9735cda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Menu">
-      <UniqueIdentifier>{c97778f1-399f-4b68-9740-88b70b3d60a2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Game\Map">
       <UniqueIdentifier>{9492eeff-d76d-493f-8c55-5e3e5c941b39}</UniqueIdentifier>
     </Filter>
@@ -142,6 +148,15 @@
     </Filter>
     <Filter Include="Sources\Effect\Particle">
       <UniqueIdentifier>{74f4760e-3d1f-4ca5-8754-9680413b4588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\UI">
+      <UniqueIdentifier>{90826765-cf3b-4666-8280-8da0b336ebaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\UI\Menu">
+      <UniqueIdentifier>{c97778f1-399f-4b68-9740-88b70b3d60a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\UI\HPIcon">
+      <UniqueIdentifier>{4d1471d2-e3d1-45b5-b191-25a752487ed9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -208,12 +223,6 @@
     <ClInclude Include="Sources\Effect\Effect.h">
       <Filter>Sources\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Menu\Menu.h">
-      <Filter>Sources\Game\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Game\Menu\TitleMenu.h">
-      <Filter>Sources\Game\Menu</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Game\Map\CollisionMap.h">
       <Filter>Sources\Game\Map</Filter>
     </ClInclude>
@@ -262,6 +271,21 @@
     </ClInclude>
     <ClInclude Include="Sources\Effect\Particle\AttackParticles.h">
       <Filter>Sources\Effect\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\Menu\GameOverMenu.h">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\Menu\Menu.h">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\Menu\PoseMenu.h">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\Menu\TitleMenu.h">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\HPIcon\HPIcon.h">
+      <Filter>Sources\Game\UI\HPIcon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

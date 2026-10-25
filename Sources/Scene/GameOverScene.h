@@ -2,7 +2,7 @@
 
 #include "Scene.h"
 #include "Manager/CameraManager.h"
-#include "Game/Menu/GameOverMenu.h"
+#include "Game/UI/Menu/GameOverMenu.h"
 #include "Object/Skydome/Skydome.h"
 
 class GameOverScene final : public Scene {

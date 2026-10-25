@@ -14,7 +14,8 @@
 #include "Object/Skydome/Skydome.h"
 
 #include "Game/Map/MapChipField.h"
-#include "Game/Menu/PoseMenu.h"
+#include "Game/UI/Menu/PoseMenu.h"
+#include "Game/UI/HPIcon/HPIcon.h"
 #include "Manager/CameraManager.h"
 
 #include <vector>
@@ -154,4 +155,11 @@ private:
 
 	// ポーズメニューからの要求
 	PauseRequest pauseRequest_ = PauseRequest::None;
+
+	// HPアイコン
+	HpIcon *hpIcon_ = nullptr;
+
+	// 操作説明
+	uint32_t graphHandleOperationGuide_ = 0;
+	KamataEngine::Sprite *spriteOperationGuide_ = nullptr;
 };

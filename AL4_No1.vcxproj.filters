@@ -77,7 +77,6 @@
     <ClCompile Include="Sources\Object\Player\State\KnockBackState.cpp">
       <Filter>Sources\Object\Player\State</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Goal\Goal.cpp" />
     <ClCompile Include="Sources\Scene\ClearScene.cpp">
       <Filter>Sources\Scene</Filter>
     </ClCompile>
@@ -101,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="Sources\Game\UI\HPIcon\HPIcon.cpp">
       <Filter>Sources\Game\UI\HPIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Enemy\JumpEnemy.cpp">
+      <Filter>Sources\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Goal\Goal.cpp">
+      <Filter>Sources\Object\Goal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +162,9 @@
     </Filter>
     <Filter Include="Sources\Game\UI\HPIcon">
       <UniqueIdentifier>{4d1471d2-e3d1-45b5-b191-25a752487ed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Object\Goal">
+      <UniqueIdentifier>{8e2ab9e2-c86f-4861-85d3-74a5a848b6c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -259,7 +267,6 @@
     <ClInclude Include="Sources\Object\Player\State\KnockBackState.h">
       <Filter>Sources\Object\Player\State</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Goal\Goal.h" />
     <ClInclude Include="Sources\Scene\ClearScene.h">
       <Filter>Sources\Scene</Filter>
     </ClInclude>
@@ -286,6 +293,12 @@
     </ClInclude>
     <ClInclude Include="Sources\Game\UI\HPIcon\HPIcon.h">
       <Filter>Sources\Game\UI\HPIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Enemy\JumpEnemy.h">
+      <Filter>Sources\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Goal\Goal.h">
+      <Filter>Sources\Object\Goal</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

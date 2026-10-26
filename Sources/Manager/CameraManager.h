@@ -36,10 +36,21 @@ public:
         normalCamera_.SetTarget(player);
     }
 
+    void StartShake(float duration = 0.25f, float intensity = 0.3f);
+
+private:
+    void UpdateShake(float deltaTime);
+
 private:
     GameCamera camera_;
     GameNormalCamera normalCamera_;
     GameDebugCamera debugCamera_;
 
     bool isDebugCameraActive_ = false;
+
+    // カメラシェイク
+    float shakeTimer_ = 0.0f;
+    float shakeDuration_ = 0.25f;
+    float shakeIntensity_ = 0.3f;
+    KamataEngine::Vector3 shakeOffset_{};
 };

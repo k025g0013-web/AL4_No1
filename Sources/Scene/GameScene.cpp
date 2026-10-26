@@ -534,6 +534,8 @@ void GameScene::CheckAllCollision() {
 			player_->OnCollision(enemy);
 			// 敵の衝突時関数を呼び出す
 			enemy->OnCollision(player_);
+
+			cameraManager_->StartShake(0.25f, 0.3f);
 		}
 	}
 
@@ -554,6 +556,8 @@ void GameScene::CheckAllCollision() {
 			player_->OnCollision(shieldEnemy);
 			// 敵の衝突時関数を呼び出す
 			shieldEnemy->OnCollision(player_);
+
+			cameraManager_->StartShake(0.25f, 0.3f);
 		}
 	}
 
@@ -574,6 +578,8 @@ void GameScene::CheckAllCollision() {
 			player_->OnCollision(jumpEnemy);
 			// 敵の衝突時関数を呼び出す
 			jumpEnemy->OnCollision(player_);
+
+			cameraManager_->StartShake(0.25f, 0.3f);
 		}
 	}
 #pragma endregion

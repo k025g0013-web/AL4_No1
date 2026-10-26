@@ -8,6 +8,9 @@
 using namespace KamataEngine;
 
 void GameOverMenu::Initialize() {
+    // SE初期化
+    InitializeSE();
+
     selectedItem_ = 0;
     isDecided_ = false;
     moveTimer_ = 0.0f;
@@ -63,6 +66,7 @@ void GameOverMenu::Update() {
 
     // 決定
     if (input->TriggerKey(DIK_SPACE)) {
+        PlayDecideSE();
         isDecided_ = true;
         return;
     }
@@ -89,6 +93,8 @@ void GameOverMenu::Update() {
 
     // 選択項目が変わった
     if (previousItem != selectedItem_) {
+        PlaySelectSE();
+
         startPositionContinue_ = basePositionContinue_;
         startPositionBackTitle_ = basePositionBackTitle_;
 

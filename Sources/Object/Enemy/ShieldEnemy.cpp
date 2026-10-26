@@ -1,4 +1,5 @@
 #include "ShieldEnemy.h"
+#include "audio/Audio.h"
 
 #include "Object/Player/Player.h"
 #include "Object/Player/State/KnockBackState.h"
@@ -18,6 +19,9 @@ void ShieldEnemy::Initialize(Model *model, KamataEngine::Camera *camera, const V
 	// ガード状態を初期化
 	guardTimer_ = 0;
 	isGuarding_ = false;
+
+	auto *audio = Audio::GetInstance();
+	guardSEHandle_ = audio->LoadWave("seGuard.mp3");
 }
 
 void ShieldEnemy::Update() {
@@ -105,6 +109,8 @@ void ShieldEnemy::OnCollision(Player *player) {
 			player->RequestState(std::make_unique<KnockBackState>());
 
 			behaviorRequest_ = Behavior::kGuard;
+
+			Audio::GetInstance()->PlayWave(guardSEHandle_, false, 1.0f);
 
 			return;
 		}

@@ -36,11 +36,17 @@ public:
 	bool IsGameEnd() const { return isGameEnd_; }
 
 private:
-	// ゲーム終了フラグ
-	bool isGameEnd_ = false;
-
 	// シーン切り替え
 	void ChangeScene();
+
+	// BGMの読み込みと再生
+	void InitializeBGM();
+	void PlayBGM(SceneType sceneType);
+	void StopBGM();
+
+private:
+	// ゲーム終了フラグ
+	bool isGameEnd_ = false;
 
 	// シーン
 	Scene* currentScene_ = nullptr;
@@ -52,4 +58,13 @@ private:
 	TransitionState transitionState_ = TransitionState::None;
 
 	float fadeDuration_ = 0.5f;
+
+	uint32_t bgmTitleHandle_ = 0;
+	uint32_t bgmGameHandle_ = 0;
+	uint32_t bgmGameOverHandle_ = 0;
+	uint32_t bgmClearHandle_ = 0;
+
+	uint32_t bgmVoiceHandle_ = 0;
+	SceneType playingBGMScene_ = SceneType::kTitle;
+	bool isBGMPlaying_ = false;
 };

@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "Player.h"
+#include "audio/Audio.h"
 #include "State/PlayerState.h"
 #include "State/RootState.h"
 #include "State/KnockBackState.h"
@@ -40,6 +41,14 @@ void Player::Initialize(Model *model, Model *modelAttack, Camera *camera, const 
 
 	// 引数の内容をメンバ変数に記録
 	camera_ = camera;
+
+	// SE読み込み
+	auto *audio = Audio::GetInstance();
+
+	jumpSEHandle_ = audio->LoadWave("seJump.mp3");
+	deathSEHandle_ = audio->LoadWave("seDeath.mp3");
+	damageSEHandle_ = audio->LoadWave("seDamage.mp3");
+	attackSEHandle_ = audio->LoadWave("seAttack.mp3");
 
 	// 初期回転
 	lrDirection_ = LRDirection::kRight;
@@ -294,6 +303,7 @@ void Player::MoveInput() {
 		}
 		if (Input::GetInstance()->TriggerKey(DIK_UP) ||
 			Input::GetInstance()->TriggerKey(DIK_W)) {
+			PlaySE(jumpSEHandle_, 0.8f);
 			// ジャンプ初速
 			velocity_.y += kJumpAcceleration;
 		}
@@ -458,32 +468,7 @@ void Player::OnCollision(const Enemy *enemy) {
 	// HPを減らす
 	hp_--;
 
-	// ダメージ演出を開始
-	damageAnimationTimer_ = kDamageAnimationTime;
-
-	// フラグを立ててダメージ後の無敵時間を設定
-	isDamage_ = true;
-	damageInvincibleTimer_ = kDamageInvincibleTime;
-
-	// HPが0以下なら死亡
-	if (hp_ <= 0) {
-		hp_ = 0;
-		isDead_ = true;
-	}
-};
-
-void Player::OnCollision(const ShieldEnemy *shieldEnemy) {
-	(void)shieldEnemy;
-
-	if (isAttack_ || isInvincible_ ||
-		damageInvincibleTimer_ > 0.0f || isDead_) {
-		return;
-	}
-
-	RequestState(std::make_unique<KnockBackState>());
-
-	// HPを減らす
-	hp_--;
+	PlaySE(damageSEHandle_, 1.0f);
 
 	// ダメージ演出を開始
 	damageAnimationTimer_ = kDamageAnimationTime;
@@ -496,6 +481,8 @@ void Player::OnCollision(const ShieldEnemy *shieldEnemy) {
 	if (hp_ <= 0) {
 		hp_ = 0;
 		isDead_ = true;
+
+		PlaySE(deathSEHandle_, 1.0f);
 	}
 };
 #pragma endregion
@@ -522,4 +509,12 @@ void Player::CheckScreenAndWallSandwich(const CollisionMapInfo &info, float minX
 		isDead_ = true;
 		return;
 	}
+}
+
+void Player::PlaySE(uint32_t soundDataHandle, float volume) {
+	Audio::GetInstance()->PlayWave(
+		soundDataHandle,
+		false,
+		volume
+	);
 }

@@ -40,4 +40,7 @@ protected:
 
 	// ガード中フラグ
 	bool isGuarding_ = false;
+
+	// 防御SE
+	uint32_t guardSEHandle_ = 0;
 };

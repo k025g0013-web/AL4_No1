@@ -107,6 +107,9 @@
     <ClCompile Include="Sources\Object\Goal\Goal.cpp">
       <Filter>Sources\Object\Goal</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Game\UI\Menu\Menu.cpp">
+      <Filter>Sources\Game\UI\Menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

@@ -8,6 +8,9 @@ using namespace KamataEngine;
 #include <cmath>
 
 void PoseMenu::Initialize() {
+    // SE初期化
+    InitializeSE();
+
     // 状態を初期化
     selectedItem_ = 1;
     isDecided_ = false;
@@ -52,10 +55,12 @@ void PoseMenu::Initialize() {
 void PoseMenu::Update() {
     auto *input = Input::GetInstance();
 
+    // 選択変更前の項目を保存
     int previousItem = selectedItem_;
 
     // 決定
     if (input->TriggerKey(DIK_SPACE)) {
+        PlayDecideSE();
         isDecided_ = true;
     }
 
@@ -77,6 +82,8 @@ void PoseMenu::Update() {
 
     // 選択項目が変わった
     if (previousItem != selectedItem_) {
+        PlaySelectSE();
+
         startPositionReset_ = basePositionReset_;
         startPositionResume_ = basePositionResume_;
         startPositionBackTitle_ = basePositionBackTitle_;

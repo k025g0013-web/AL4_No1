@@ -77,7 +77,6 @@ public:
 
 	// 衝突応答
 	void OnCollision(const Enemy* enemy);
-	void OnCollision(const ShieldEnemy* shieldEnemy);
 
 	// 画面端と壁の挟まれ判定
 	void CheckScreenAndWallSandwich(const CollisionMapInfo& info, float minX, float maxX);
@@ -98,6 +97,8 @@ public:
 	int GetMaxHP() const { return kMaxHP; }
 
 	bool IsDashEffectActive() const { return isDashEffectActive_; }
+
+	void PlaySE(uint32_t soundDataHandle, float volume = 1.0f);
 
 private:
 	// プレイヤーの指定した角の座標を取得
@@ -243,4 +244,15 @@ private:
 	static constexpr float kDamageAnimationTime = 0.2f;
 	// ダメージ演出タイマー
 	float damageAnimationTimer_ = 0.0f;
+
+	/* SE
+	--------------------*/
+	// ジャンプ
+	uint32_t jumpSEHandle_ = 0;
+	// 死亡
+	uint32_t deathSEHandle_ = 0;
+	// ダメージ
+	uint32_t damageSEHandle_ = 0;
+	// 攻撃
+	uint32_t attackSEHandle_ = 0;
 };

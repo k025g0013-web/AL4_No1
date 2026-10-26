@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "audio/Audio.h"
 
 #include "Object/Player/Player.h"
 #include "Scene/GameScene.h"
@@ -39,6 +40,10 @@ void Enemy::Initialize(Model *model, KamataEngine::Camera *camera, const Vector3
 
 	onGround_ = false;
 	isDead_ = false;
+
+	// 音声読み込み
+	auto *audio = Audio::GetInstance();
+	deathSEHandle_ = audio->LoadWave("seDeath.mp3");
 
 	// 歩行状態の初期化
 	BehaviorWalkInitialize();
@@ -192,6 +197,8 @@ void Enemy::SetDeathVelocity(const Player *player) {
 
 // 死亡Behavior初期化
 void Enemy::BehaviorDeathInitialize() {
+	Audio::GetInstance()->PlayWave(deathSEHandle_, false, 1.0f);
+
 	deathTimer_ = 0;
 
 	// 吹っ飛ぶ速度

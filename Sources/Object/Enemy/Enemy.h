@@ -165,7 +165,8 @@ protected:
     float deathDirection_ = 1.0f;
     // 死亡時の回転速度
     KamataEngine::Vector3 deathRotationVelocity_{};
-
+    // 死亡時SE
+    uint32_t deathSEHandle_ = 0;
 
     /* ゲームシーン
     --------------------*/

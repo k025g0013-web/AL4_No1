@@ -1,20 +1,27 @@
 #include "SceneManager.h"
 
+#include "KamataEngine.h"
+
 #include "Scene/Scene.h"
 #include "Scene/TitleScene.h"
 #include "Scene/GameScene.h"
 #include "Scene/GameOverScene.h"
 #include "Scene/ClearScene.h"
 
+using namespace KamataEngine;
+
 SceneManager::SceneManager() {}
 
 SceneManager::~SceneManager() {
+    StopBGM();
 
 	delete currentScene_;
 	currentScene_ = nullptr;
 }
 
 void SceneManager::Initialize(StageManager* stageManager) {
+    InitializeBGM();
+
 	// 最初のシーン
 	scene_ = SceneType::kTitle;
 
@@ -22,6 +29,8 @@ void SceneManager::Initialize(StageManager* stageManager) {
 	titleScene->Initialize(this);
 
 	currentScene_ = titleScene;
+
+    PlayBGM(SceneType::kTitle);
 
 	stageManager_ = stageManager;
 
@@ -100,6 +109,7 @@ void SceneManager::ChangeScene() {
 
                 // シーンの種類はゲームのまま
                 scene_ = SceneType::kGame;
+                PlayBGM(scene_);
                 return;
             }
 
@@ -113,6 +123,7 @@ void SceneManager::ChangeScene() {
                 currentScene_ = titleScene;
 
                 scene_ = SceneType::kTitle;
+                PlayBGM(scene_);
                 return;
             }
         }
@@ -202,4 +213,59 @@ void SceneManager::ChangeScene() {
         break;
     }
     }
+
+    PlayBGM(scene_);
+}
+
+void SceneManager::InitializeBGM() {
+    auto *audio = Audio::GetInstance();
+
+    bgmTitleHandle_ = audio->LoadWave("bgmTitle.wav");
+    bgmGameHandle_ = audio->LoadWave("bgmGame.wav");
+    bgmGameOverHandle_ = audio->LoadWave("bgmGameOver.wav");
+    bgmClearHandle_ = audio->LoadWave("bgmClear.wav");
+}
+
+void SceneManager::StopBGM() {
+    if (!isBGMPlaying_) {
+        return;
+    }
+
+    Audio::GetInstance()->StopWave(bgmVoiceHandle_);
+    isBGMPlaying_ = false;
+}
+
+void SceneManager::PlayBGM(SceneType sceneType) {
+    // 同じシーンのBGMが再生中なら、そのまま継続
+    if (isBGMPlaying_ && playingBGMScene_ == sceneType) {
+        return;
+    }
+
+    StopBGM();
+
+    uint32_t soundHandle = 0;
+
+    switch (sceneType) {
+    case SceneType::kTitle:
+        soundHandle = bgmTitleHandle_;
+        break;
+
+    case SceneType::kGame:
+        soundHandle = bgmGameHandle_;
+        break;
+
+    case SceneType::kGameOver:
+        soundHandle = bgmGameOverHandle_;
+        break;
+
+    case SceneType::kClear:
+        soundHandle = bgmClearHandle_;
+        break;
+    }
+
+    bgmVoiceHandle_ =
+        Audio::GetInstance()->PlayWave(soundHandle, true, 1.0f);
+
+    playingBGMScene_ = sceneType;
+    isBGMPlaying_ = true;
 }

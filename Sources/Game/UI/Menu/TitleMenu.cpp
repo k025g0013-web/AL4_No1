@@ -6,6 +6,9 @@ using namespace KamataEngine;
 #include <cmath>
 
 void TitleMenu::Initialize() {
+	// SE初期化
+	InitializeSE();
+
     // テクスチャ読み込み
     graphHandleStartText_ = TextureManager::Load("startText.png");
     graphHandleExitText_ = TextureManager::Load("exitText.png");
@@ -35,23 +38,32 @@ void TitleMenu::Update() {
 	int previousItem = selectedItem_;
 
 	// 決定
-	if (input->TriggerKey(DIK_SPACE)) isDecided_ = true;
+	if (input->TriggerKey(DIK_SPACE)) {
+		PlayDecideSE();
+		isDecided_ = true;
+	}
 
 	// 上
 	if (input->TriggerKey(DIK_UP) || input->TriggerKey(DIK_W)) {
 		selectedItem_--;
-		if (selectedItem_ < 0) selectedItem_ = 1;
+		if (selectedItem_ < 0){
+			selectedItem_ = 1;
+		}
 	}
 
 	// 下
 	if (input->TriggerKey(DIK_DOWN) || input->TriggerKey(DIK_S)) {
 		selectedItem_++;
-		if (selectedItem_ > 1) selectedItem_ = 0;
+		if (selectedItem_ > 1) {
+			selectedItem_ = 0;
+		}
 	}
 
 
 	// 選択項目が変わった
 	if (previousItem != selectedItem_) {
+		PlaySelectSE();
+
 		// 揺れを適用する前の座標を移動開始位置にする
 		startPositionStart_ = basePositionStart_;
 		startPositionExit_ = basePositionExit_;

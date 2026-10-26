@@ -192,6 +192,7 @@ xcopy "$(ProjectDir)..\External\KamataEngine\shaders" "$(ProjectDir)Resources\En
     <ClCompile Include="Sources\Game\Map\MapChipField.cpp" />
     <ClCompile Include="Sources\Game\UI\HPIcon\HPIcon.cpp" />
     <ClCompile Include="Sources\Game\UI\Menu\GameOverMenu.cpp" />
+    <ClCompile Include="Sources\Game\UI\Menu\Menu.cpp" />
     <ClCompile Include="Sources\Game\UI\Menu\PoseMenu.cpp" />
     <ClCompile Include="Sources\Game\UI\Menu\TitleMenu.cpp" />
     <ClCompile Include="Sources\Manager\CameraManager.cpp" />

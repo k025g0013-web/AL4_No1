@@ -82,6 +82,8 @@ void AttackState::Update(Player &player) {
 
 			// ダッシュ演出を開始
 			player.isDashEffectActive_ = true;
+
+			player.PlaySE(player.attackSEHandle_, 0.8f);
 		}
 		break;
 	}
